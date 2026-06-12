@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>서비스 | HAO DESIGN</title>
+  <meta name="description" content="하오디자인 서비스 — 카탈로그·브로슈어, 리플렛, 포스터·전단지, CI·로고, 패키지·라벨, 촬영, 다국어디자인 제작." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="css/style.css?v=85" />
+</head>
+<body>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <header class="header is-stuck" id="header">
+    <a href="index.html" class="brand" aria-label="HAO DESIGN 홈">
+      <img src="assets/img/logo.png" alt="HAO DESIGN" class="brand__logo" />
+    </a>
+    <nav class="nav" id="nav">
+      <a href="about.html">회사소개</a>
+      <div class="nav__drop">
+        <a href="service.html?cat=catalog" class="nav__drop-toggle">서비스</a>
+        <div class="nav__drop-menu">
+          <a href="service.html?cat=catalog">카탈로그 · 브로슈어</a>
+          <a href="service.html?cat=leaflet">팜플렛 · 리플렛</a>
+          <a href="service.html?cat=poster">포스터 · 전단지</a>
+          <a href="service.html?cat=ci">CI · 로고디자인</a>
+          <a href="service.html?cat=package">패키지 · 라벨</a>
+          <a href="service.html?cat=photo">촬영서비스</a>
+          <a href="service.html?cat=global">다국어디자인</a>
+        </div>
+      </div>
+      <a href="work.html">포트폴리오</a>
+      <a href="board.html">칼럼</a>
+      <a href="support.html">지원사업</a>
+    </nav>
+    <a href="contact.html" class="header__cta">견적 문의 <span>→</span></a>
+    <button class="burger" id="burger" aria-label="메뉴"><span></span><span></span></button>
+  </header>
+
+  <main>
+    <!-- ===== 카테고리 히어로 (좌 카피 + 우 이미지 세로 흐름) ===== -->
+    <section class="svc-cover">
+      <div class="svc-cover__inner">
+        <div class="svc-cover__text">
+          <p class="svc-cover__crumb"><a href="index.html">HOME</a> / 서비스 / <span id="svCrumb"></span></p>
+          <p class="svc-cover__eng" id="svEng"></p>
+          <h1 class="svc-cover__title" id="svHead"></h1>
+          <p class="svc-cover__desc" id="svDesc"></p>
+        </div>
+        <div class="svc-cover__cols" aria-hidden="true">
+          <div class="svc-cover__col"><div class="svc-cover__track" id="svImgsA"></div></div>
+          <div class="svc-cover__col svc-cover__col--rev"><div class="svc-cover__track" id="svImgsB"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 진행 과정 ===== -->
+    <section class="page page--tight">
+      <p class="section-tag">PROCESS</p>
+      <h2 class="page__title">진행 과정</h2>
+      <div class="timeline" id="timeline" style="margin-top:40px">
+        <div class="timeline__line"><i id="timelineFill"></i></div>
+        <div class="tstep"><span class="tstep__no">01</span><h3>문의 접수</h3><p>전화(1666-2027) 또는 견적 문의로 내용을 남겨주세요.</p></div>
+        <div class="tstep"><span class="tstep__no">02</span><h3>상담 · 견적</h3><p>담당자가 사양과 일정을 잡고 견적을 안내합니다.</p></div>
+        <div class="tstep"><span class="tstep__no">03</span><h3>디자인 작업</h3><p>자료 검토 후 시안 → 피드백 → 수정으로 완성합니다.</p></div>
+        <div class="tstep"><span class="tstep__no">04</span><h3>시안 확정 · 제작</h3><p>최종 승인 후 인쇄 · 후가공을 진행합니다.</p></div>
+        <div class="tstep"><span class="tstep__no">05</span><h3>최종 납품</h3><p>완성된 결과물을 약속한 일정에 전달합니다.</p></div>
+      </div>
+    </section>
+
+    <!-- ===== 작업 맛보기 ===== -->
+    <section class="page page--tight">
+      <p class="section-tag">WORKS</p>
+      <h2 class="page__title" id="svWorksT">작업 사례</h2>
+      <div class="work__grid svc-mini" id="svGrid"></div>
+      <p class="svc-more reveal"><a href="work.html" class="btn-round"><span>포트폴리오에서 더 보기</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+    </section>
+
+    <!-- ===== 서비스 소개 글 ===== -->
+    <section class="page page--tight svc-seo">
+      <div class="svc-seo__grid">
+        <h2 class="svc-seo__h" id="svSeoH"></h2>
+        <div class="svc-seo__cols">
+          <div class="svc-seo__item reveal" style="--d:0">
+            <span class="svc-seo__no">01</span>
+            <h3 id="svSeoT1"></h3>
+            <p id="svSeoP1"></p>
+          </div>
+          <div class="svc-seo__item reveal" style="--d:1">
+            <span class="svc-seo__no">02</span>
+            <h3 id="svSeoT2"></h3>
+            <p id="svSeoP2"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="contact" id="contact">
+      <div class="contact__panel reveal">
+        <svg class="contact__spin" viewBox="0 0 120 120" aria-hidden="true">
+          <defs><path id="spinPath" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" /></defs>
+          <text><textPath href="#spinPath">LET'S WORK TOGETHER · HAO DESIGN STUDIO · </textPath></text>
+        </svg>
+        <div class="contact__info">
+          <p class="contact__tag">START A PROJECT</p>
+          <h2 class="contact__title">프로젝트를<br />함께 시작할까요?</h2>
+          <p class="contact__desc">간단한 내용만 남겨주세요.<br />담당자가 확인 후 빠르게 연락드립니다.</p>
+          <ul class="contact__rows">
+            <li><span>TEL</span><a href="tel:16662027">1666-2027</a></li>
+            <li><span>MAIL</span><a href="mailto:sales@haodesign.co.kr">sales@haodesign.co.kr</a></li>
+            <li><span>TIME</span>평일 09:00 – 18:00</li>
+          </ul>
+        </div>
+        <form class="cform cform--card" id="quoteForm" novalidate>
+          <div class="cfield"><input type="text" id="name" name="name" placeholder="이름 / 회사명" required /></div>
+          <div class="cfield"><input type="tel" id="phone" name="phone" placeholder="연락처" required /></div>
+          <div class="cfield cfield--full">
+            <select id="type" name="type">
+              <option value="">문의 종류 선택</option>
+              <option>카탈로그 · 브로슈어</option>
+              <option>팜플렛 · 리플렛</option>
+              <option>포스터 · 전단지</option>
+              <option>CI · 로고디자인</option>
+              <option>패키지 · 라벨</option>
+              <option>촬영서비스</option>
+              <option>다국어디자인</option>
+              <option>기타</option>
+            </select>
+          </div>
+          <div class="cfield cfield--full"><textarea id="message" name="message" rows="4" placeholder="제작 내용, 수량, 일정 등을 자유롭게 적어주세요."></textarea></div>
+          <button type="submit" class="btn-round btn-round--solid"><span>문의 보내기</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <p class="cnote" id="formNote" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <img src="assets/img/logo.png" alt="HAO DESIGN" class="footer__logo" />
+      <p>카탈로그 · 브로슈어 · 포스터 · 리플렛<br />디자인 인쇄 원스톱 스튜디오</p>
+    </div>
+    <div class="footer__grid">
+      <div><h4>Contact</h4><a href="tel:16662027">1666-2027</a><a href="mailto:sales@haodesign.co.kr">sales@haodesign.co.kr</a><span>평일 09:00–18:00</span></div>
+      <div><h4>Location</h4><span>서울특별시 광진구</span></div>
+      <div><h4>Menu</h4><a href="about.html">회사소개</a><a href="work.html">포트폴리오</a><a href="board.html">칼럼</a><a href="support.html">지원사업</a><a href="contact.html">견적문의</a></div>
+    </div>
+    <div class="footer__bottom">
+      <span>© <i id="year"></i> HAO DESIGN. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="js/data.js?v=8"></script>
+  <script src="js/main.js?v=36"></script>
+  <script>
+  (function () {
+    "use strict";
+    /* 서비스 카테고리 콘텐츠 — js/data.js DEFAULT_SERVICE (관리자 '서비스 페이지' 탭에서 수정) */
+    var CATS = HAO.getService();
+
+    var key = (location.search.match(/[?&]cat=([a-z]+)/) || [])[1];
+    if (!CATS[key]) key = "catalog";
+    var cat = CATS[key];
+    var seo = cat.seo;
+
+    document.title = cat.label + " | HAO DESIGN";
+    document.getElementById("svCrumb").textContent = cat.label;
+    document.getElementById("svDesc").textContent = cat.desc;
+    document.getElementById("svEng").textContent = cat.eng;
+    document.getElementById("svHead").innerHTML = HAO.fmt(cat.head, "b");
+
+    document.getElementById("svSeoH").textContent = seo.h;
+    document.getElementById("svSeoT1").textContent = seo.t1;
+    document.getElementById("svSeoP1").textContent = seo.p1;
+    document.getElementById("svSeoT2").textContent = seo.t2;
+    document.getElementById("svSeoP2").textContent = seo.p2;
+
+    /* 히어로 이미지 세로 흐름 (두 컬럼, 무한 루프) + 작업 맛보기 */
+    var works = HAO.getWorks().filter(function (w) { return w.c === cat.c; });
+    var flow = works.slice(0, 10);
+    if (flow.length < 4) {
+      flow = flow.concat(HAO.getWorks().filter(function (w) { return w.c !== cat.c; }).slice(0, 8 - flow.length));
+    }
+    function icard(w) {
+      return '<div class="svc-cover__card"><img src="' + HAO.imgSrc(w.f) + '" alt="" /></div>';
+    }
+    var ia = flow.filter(function (w, i) { return i % 2 === 0; }).map(icard).join("");
+    var ib = flow.filter(function (w, i) { return i % 2 === 1; }).map(icard).join("");
+    document.getElementById("svImgsA").innerHTML = ia + ia; // 루프용 복제
+    document.getElementById("svImgsB").innerHTML = ib + ib;
+
+    document.getElementById("svWorksT").textContent = cat.label + " 작업 사례";
+    document.getElementById("svGrid").innerHTML = works.slice(0, 4).map(function (w) {
+      return '<article class="wcard">' +
+        '<div class="wcard__media"><img src="' + HAO.imgSrc(w.f) + '" alt="' + w.t + '" loading="lazy" /></div>' +
+        '<div class="wcard__info"><span class="wcard__title">' + w.t + '</span><span class="wcard__cat">' + w.c + '</span></div>' +
+        '</article>';
+    }).join("");
+  })();
+  </script>
+</body>
+</html>
