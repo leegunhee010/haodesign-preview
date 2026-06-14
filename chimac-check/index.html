@@ -2,194 +2,207 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>치맥페 바우처</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gothic+A1:wght@400;500;700;900&family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800;900&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
 
   :root {
-    --beer: #f5b301;
-    --beer-deep: #d98c00;
-    --foam: #fff7e0;
-    --char: #1a1410;
-    --char2: #2a221a;
-    --red: #e23b2e;
-    --green: #2fae66;
-    --ink: #efe6d2;
+    --accent: #f59e0b;
+    --accent-deep: #d97706;
+    --accent-soft: #fff7e6;
+    --green: #16a34a;
+    --green-soft: #e8f7ee;
+    --red: #dc2626;
+    --red-soft: #fdeaea;
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --text: #15181d;
+    --muted: #6b7280;
+    --border: #e6e8ec;
     --font-body: 'Gothic A1', sans-serif;
-    --font-display: 'Black Han Sans', sans-serif;
   }
   /* 베트남어: 라틴 확장(성조) 지원 폰트로 전환 */
-  body.lang-vi {
-    --font-body: 'Be Vietnam Pro', sans-serif;
-    --font-display: 'Be Vietnam Pro', sans-serif;
-  }
+  body.lang-vi { --font-body: 'Be Vietnam Pro', sans-serif; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: var(--font-body);
-    background:
-      radial-gradient(circle at 20% 10%, rgba(245,179,1,0.12), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(226,59,46,0.10), transparent 45%),
-      var(--char);
-    color: var(--ink);
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
-    padding: 20px 16px 60px;
+    padding: 18px 16px 60px;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
   }
+  .wrap { max-width: 440px; margin: 0 auto; }
 
-  .wrap { max-width: 460px; margin: 0 auto; }
-
-  header { text-align: center; margin: 14px 0 8px; position: relative; }
-  .logo {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 42px; line-height: 1.05; color: var(--beer);
-    text-shadow: 3px 3px 0 var(--char2), 6px 6px 0 rgba(0,0,0,0.3);
-    letter-spacing: -1px;
-  }
-  .logo .em { color: var(--red); }
-  .sub { margin-top: 6px; font-size: 13px; letter-spacing: 4px; color: var(--beer-deep); font-weight: 700; }
+  /* ===== 헤더 ===== */
+  header { position: relative; text-align: center; margin: 6px 0 4px; }
+  .logo { font-size: 30px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); }
+  .logo .em { color: var(--accent-deep); }
+  .sub { margin-top: 3px; font-size: 11px; letter-spacing: 3px; color: var(--muted); font-weight: 700; }
   .mode-badge {
-    display:inline-block; margin-top:10px; font-size:12px; font-weight:700;
-    letter-spacing:2px; padding:5px 14px; border-radius:999px;
+    display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 700;
+    padding: 6px 14px; border-radius: 999px;
   }
-  .mode-badge.check { background: rgba(47,174,102,0.18); color: var(--green); border:1px solid var(--green); }
-  .mode-badge.admin { background: rgba(245,179,1,0.18); color: var(--beer); border:1px solid var(--beer); }
+  .mode-badge.check { background: var(--green-soft); color: var(--green); }
+  .mode-badge.admin { background: var(--accent-soft); color: var(--accent-deep); }
   .topbtn {
-    position:absolute; top:6px; right:0; background: var(--char2);
-    border:1px solid rgba(245,179,1,0.3); color:var(--beer); cursor:pointer;
-    border-radius:10px; padding:8px 12px; font-size:12px; font-weight:700;
+    position: absolute; top: 0; right: 0; background: var(--surface);
+    border: 1px solid var(--border); color: var(--text); cursor: pointer;
+    border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 700;
   }
+  .topbtn:active { background: var(--bg); }
+  .lang-mini { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+  .lang-mini button {
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .lang-mini button.on { background: var(--text); color: #fff; border-color: var(--text); }
 
-  .stats { display: flex; gap: 10px; margin: 20px 0 18px; }
+  /* ===== 통계 ===== */
+  .stats { display: flex; gap: 10px; margin: 18px 0; }
   .stat {
-    flex: 1; background: var(--char2); border: 1px solid rgba(245,179,1,0.25);
-    border-radius: 14px; padding: 12px 8px; text-align: center;
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 8px; text-align: center;
   }
-  .stat .n { font-family:var(--font-display); font-size: 26px; color: var(--beer); }
-  .stat .l { font-size: 11px; color: #b7a98c; margin-top: 2px; letter-spacing: 1px; }
+  .stat .n { font-size: 26px; font-weight: 900; color: var(--text); line-height: 1; }
+  .stat.left .n { color: var(--accent-deep); }
+  .stat .l { font-size: 11px; color: var(--muted); margin-top: 6px; font-weight: 600; }
 
+  /* ===== 카드 ===== */
   .card {
-    background: var(--char2); border: 1px solid rgba(245,179,1,0.2);
-    border-radius: 20px; padding: 18px; margin-bottom: 16px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 18px; margin-bottom: 14px;
   }
   .card h2 {
-    font-family:var(--font-display); font-size: 18px; color: var(--foam);
+    font-size: 15px; font-weight: 800; color: var(--text);
     margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
   }
-  .card h2 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--beer); }
+  .card h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
-  #reader { border-radius: 14px; overflow: hidden; }
+  #reader { border-radius: 14px; overflow: hidden; background: var(--bg); }
 
+  /* ===== 버튼 ===== */
   .btn {
-    width: 100%; border: none; cursor: pointer;
-    font-family:var(--font-display); font-size: 17px; padding: 15px; border-radius: 14px;
-    background: var(--beer); color: var(--char); transition: transform .08s, filter .2s;
+    width: 100%; border: none; cursor: pointer; font-family: inherit;
+    font-size: 16px; font-weight: 800; padding: 15px; border-radius: 14px;
+    background: var(--accent); color: #1a1205; transition: transform .08s, filter .15s;
   }
-  .btn:active { transform: scale(0.97); }
-  .btn.ghost { background: transparent; border: 2px solid rgba(245,179,1,0.4); color: var(--beer); }
+  .btn:active { transform: scale(0.98); }
+  .btn:hover { filter: brightness(0.98); }
+  .btn.ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
   .btn + .btn { margin-top: 10px; }
 
   .manual { display: flex; gap: 8px; margin-top: 12px; }
   .manual input {
-    flex: 1; background: var(--char); border: 1px solid rgba(245,179,1,0.3);
-    color: var(--ink); border-radius: 12px; padding: 13px 14px;
-    font-size: 16px; font-family:var(--font-body); letter-spacing: 2px; text-transform: uppercase;
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); border-radius: 12px; padding: 13px 14px;
+    font-size: 16px; font-family: inherit; letter-spacing: 1px; text-transform: uppercase;
   }
-  .manual input:focus { outline: none; border-color: var(--beer); }
+  .manual input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
   .manual button {
-    border: none; background: var(--beer-deep); color: var(--char);
-    font-family:var(--font-display); padding: 0 18px; border-radius: 12px; cursor: pointer;
+    border: none; background: var(--text); color: #fff; font-weight: 800;
+    padding: 0 18px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 15px;
   }
 
-  .result { border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 16px; display: none; animation: pop .25s ease; }
-  @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .result.ok  { display:block; background: rgba(47,174,102,0.15); border: 2px solid var(--green); }
-  .result.dup { display:block; background: rgba(226,59,46,0.15); border: 2px solid var(--red); }
-  .result.bad { display:block; background: rgba(120,120,120,0.15); border: 2px solid #888; }
-  .result .ico { font-size: 46px; }
-  .result .ttl { font-family:var(--font-display); font-size: 24px; margin: 6px 0 4px; }
+  /* ===== 결과 배너 ===== */
+  .result { border-radius: 18px; padding: 24px 20px; text-align: center; margin-bottom: 14px; display: none; animation: pop .2s ease; }
+  @keyframes pop { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .result.ok  { display: block; background: var(--green-soft); border: 1.5px solid var(--green); }
+  .result.dup { display: block; background: var(--red-soft); border: 1.5px solid var(--red); }
+  .result.bad { display: block; background: #f1f2f4; border: 1.5px solid #cbd0d6; }
+  .result .ico { font-size: 50px; line-height: 1; }
+  .result .ttl { font-size: 24px; font-weight: 900; margin: 8px 0 4px; }
   .result.ok .ttl { color: var(--green); }
   .result.dup .ttl { color: var(--red); }
-  .result .meta { font-size: 13px; color: #c9bda3; }
-  .result .code { font-family: monospace; font-size: 15px; letter-spacing: 2px; color: var(--foam); margin-top: 6px; }
+  .result .meta { font-size: 13px; color: var(--muted); }
+  .result .code { font-family: ui-monospace, monospace; font-size: 15px; letter-spacing: 2px; color: var(--text); margin-top: 8px; font-weight: 700; }
 
-  .gen-row { display:flex; gap:8px; align-items:center; margin-bottom: 12px; }
+  /* ===== 발급 ===== */
+  .gen-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
   .gen-row input {
-    width: 70px; background: var(--char); border: 1px solid rgba(245,179,1,0.3);
-    color: var(--ink); border-radius: 10px; padding: 10px; font-size: 15px; text-align:center;
+    width: 72px; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); border-radius: 10px; padding: 11px; font-size: 15px; text-align: center;
   }
-  .gen-row label { font-size: 14px; color:#c9bda3; }
+  .gen-row label { font-size: 14px; color: var(--muted); }
 
+  /* ===== QR 카드 목록 ===== */
   .voucher-list { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .v {
-    background: var(--foam); color: var(--char); border-radius: 12px; padding: 12px 8px;
-    text-align:center; position: relative; overflow: hidden;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    border-radius: 14px; padding: 12px 8px; text-align: center; position: relative; overflow: hidden;
   }
-  .v.used { opacity: 0.7; }
-  .v.used canvas, .v.used img { opacity: 0.35; }
+  .v.used { opacity: 0.75; }
+  .v.used canvas, .v.used img { opacity: 0.3; }
   .v.used .badge-used {
-    position:absolute; top:8px; left:50%; transform:translateX(-50%) rotate(-8deg);
-    font-family:var(--font-display); color:#fff; background:var(--red);
-    font-size:11px; padding:2px 8px; border-radius:6px;
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%) rotate(-6deg);
+    font-weight: 800; color: #fff; background: var(--red); font-size: 11px; padding: 2px 8px; border-radius: 6px;
   }
   .v .vinfo { font-size: 11px; color: var(--red); font-weight: 700; margin-top: 4px; line-height: 1.3; }
-  .v canvas, .v img { width: 84px !important; height: 84px !important; margin:0 auto; }
-  .v .vc { font-family: monospace; font-size: 11px; margin-top: 6px; font-weight: 700; letter-spacing: 1px; }
+  .v canvas, .v img { width: 84px !important; height: 84px !important; margin: 0 auto; background: #fff; border-radius: 6px; }
+  .v .vc { font-family: ui-monospace, monospace; font-size: 11px; margin-top: 6px; font-weight: 700; letter-spacing: 1px; }
 
-  .toolbar { display:flex; gap:8px; margin-top:14px; }
+  .toolbar { display: flex; gap: 8px; margin-top: 14px; }
   .toolbar .btn { font-size: 14px; padding: 12px; }
 
-  .empty { text-align:center; color:#8c8067; font-size: 14px; padding: 20px 0; }
-  .note { font-size: 12px; color:#8c8067; text-align:center; margin-top: 24px; line-height:1.6; }
+  .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 20px 0; }
+  .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 22px; line-height: 1.7; }
 
-  /* 사용 현황 표 */
-  .tbl-wrap { margin-top: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  /* ===== 사용 현황 표 ===== */
+  .tbl-wrap { margin-top: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table.usage { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.usage th, table.usage td { padding: 9px 8px; text-align: left; border-bottom: 1px solid rgba(245,179,1,0.12); white-space: nowrap; }
-  table.usage th { color: var(--beer); font-weight: 700; font-size: 12px; letter-spacing: 1px; border-bottom: 1px solid rgba(245,179,1,0.3); }
-  table.usage td.code { font-family: monospace; letter-spacing: 1px; color: var(--foam); }
-  table.usage tr.used td { color: #c9bda3; }
-  .pill { display:inline-block; padding:2px 9px; border-radius:999px; font-size:11px; font-weight:700; }
-  .pill.ok { background: rgba(47,174,102,0.18); color: var(--green); }
-  .pill.no { background: rgba(245,179,1,0.15); color: var(--beer); }
-  .filter-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  table.usage th, table.usage td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.usage th { color: var(--muted); font-weight: 700; font-size: 12px; }
+  table.usage td.code { font-family: ui-monospace, monospace; letter-spacing: 1px; color: var(--text); font-weight: 600; }
+  table.usage tr.used td { color: var(--muted); }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .pill.ok { background: var(--green-soft); color: var(--green); }
+  .pill.no { background: var(--accent-soft); color: var(--accent-deep); }
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
   .filter-row button {
-    background: var(--char); border:1px solid rgba(245,179,1,0.25); color:#c9bda3;
-    border-radius:999px; padding:6px 13px; font-size:12px; font-weight:700; cursor:pointer;
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
   }
-  .filter-row button.on { background: var(--beer); color: var(--char); border-color: var(--beer); }
+  .filter-row button.on { background: var(--text); color: #fff; border-color: var(--text); }
 
-  /* 매장별 요약 */
-  .store-sum { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
-  .store-sum .s { background: var(--char); border:1px solid rgba(245,179,1,0.18); border-radius:12px; padding:11px 13px; display:flex; justify-content:space-between; align-items:center; }
-  .store-sum .s .nm { font-weight:700; color: var(--ink); font-size:14px; }
-  .store-sum .s .ct { font-family:var(--font-display); color: var(--beer); font-size:20px; }
+  /* ===== 매장별 요약 ===== */
+  .store-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px; }
+  .store-sum .s { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .store-sum .s .nm { font-weight: 700; color: var(--text); font-size: 14px; }
+  .store-sum .s .ct { font-weight: 900; color: var(--accent-deep); font-size: 20px; }
 
-  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; padding: 24px; z-index: 50; }
-  .modal.open { display:flex; }
-  .modal-box { background: var(--char2); border:1px solid rgba(245,179,1,0.3); border-radius:18px; padding: 24px; width:100%; max-width: 320px; text-align:center; }
-  .modal-box h3 { font-family:var(--font-display); color:var(--beer); font-size:20px; margin-bottom:14px; }
-  .lang-toggle { display:flex; gap:6px; justify-content:center; margin-bottom:16px; }
+  /* ===== 모달 ===== */
+  .modal { position: fixed; inset: 0; background: rgba(20,22,26,0.45); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 50; }
+  .modal.open { display: flex; }
+  .modal-box { background: var(--surface); border-radius: 20px; padding: 26px 24px; width: 100%; max-width: 330px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.18); }
+  .modal-box h3 { font-size: 19px; font-weight: 900; margin-bottom: 16px; color: var(--text); }
+  .lang-toggle { display: flex; gap: 6px; justify-content: center; margin-bottom: 18px; }
   .lang-toggle button {
-    flex:1; background: var(--char); border:1px solid rgba(245,179,1,0.25); color:#c9bda3;
-    border-radius:10px; padding:9px; font-size:13px; font-weight:700; cursor:pointer;
+    flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
   }
-  .lang-toggle button.on { background: var(--beer); color: var(--char); border-color: var(--beer); }
-  .lang-mini { display:flex; gap:5px; justify-content:center; margin-top:10px; }
-  .lang-mini button {
-    background: var(--char2); border:1px solid rgba(245,179,1,0.25); color:#c9bda3;
-    border-radius:8px; padding:4px 12px; font-size:11px; font-weight:700; cursor:pointer;
+  .lang-toggle button.on { background: var(--text); color: #fff; border-color: var(--text); }
+  .modal-box input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 12px; padding: 14px; font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 10px; }
+  .modal-box input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+  .modal-box .err { color: var(--red); font-size: 13px; min-height: 18px; margin-bottom: 8px; }
+  .hide { display: none !important; }
+
+  /* ===== 인쇄: QR 카드만 출력 ===== */
+  @media print {
+    @page { margin: 12mm; }
+    body { background: #fff; padding: 0; }
+    header, .lang-mini, .stats, .mode-badge, #checkView, #issueCard, #usageCard,
+    .note, #printCard > h2, #printCard .toolbar { display: none !important; }
+    .card { border: none; padding: 0; margin: 0; background: #fff; }
+    .voucher-list { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .v { border: 1px solid #ddd; break-inside: avoid; padding: 14px 8px; opacity: 1 !important; }
+    .v canvas, .v img { width: 110px !important; height: 110px !important; opacity: 1 !important; }
   }
-  .lang-mini button.on { background: var(--beer); color: var(--char); border-color: var(--beer); }
-  .modal-box input { width:100%; background: var(--char); border:1px solid rgba(245,179,1,0.3); color:var(--ink); border-radius:12px; padding:13px; font-size:16px; text-align:center; letter-spacing:3px; margin-bottom:12px; }
-  .modal-box input:focus { outline:none; border-color:var(--beer); }
-  .modal-box .err { color: var(--red); font-size:13px; min-height:16px; margin-bottom:8px; }
-  .hide { display:none !important; }
 </style>
 </head>
 <body>
@@ -208,7 +221,7 @@
   <div class="stats">
     <div class="stat"><div class="n" id="stTotal">0</div><div class="l" data-i18n="issued">발급</div></div>
     <div class="stat"><div class="n" id="stUsed">0</div><div class="l" data-i18n="used">사용</div></div>
-    <div class="stat"><div class="n" id="stLeft">0</div><div class="l" data-i18n="left">잔여</div></div>
+    <div class="stat left"><div class="n" id="stLeft">0</div><div class="l" data-i18n="left">잔여</div></div>
   </div>
 
   <!-- 검증(메인) 화면 -->
@@ -219,7 +232,7 @@
       <div id="reader"></div>
       <button class="btn" id="scanBtn" style="margin-top:12px" data-i18n="scanStart">카메라 시작</button>
       <div class="manual">
-        <input id="manualCode" placeholder="코드 직접 입력" data-i18n-ph="codePlaceholder" autocomplete="off">
+        <input id="manualCode" placeholder="코드 직접 입력" data-i18n-ph="codePlaceholder" autocomplete="off" autocapitalize="characters" spellcheck="false">
         <button id="manualBtn" data-i18n="check">확인</button>
       </div>
     </div>
@@ -233,20 +246,20 @@
   <div id="adminView" class="hide">
     <!-- 발급 패널: 마스터 관리자 전용 -->
     <div class="card" id="issueCard">
-      <h2><span class="dot"></span><span data-i18n="issueTitle">바우처 등록·발급</span> <span style="font-size:12px;color:var(--beer-deep);font-weight:700;margin-left:auto" data-i18n="masterOnly">마스터 전용</span></h2>
+      <h2><span class="dot"></span><span data-i18n="issueTitle">바우처 등록·발급</span> <span style="font-size:12px;color:var(--accent-deep);font-weight:700;margin-left:auto" data-i18n="masterOnly">마스터 전용</span></h2>
       <div class="gen-row">
         <input id="genCount" type="number" min="1" max="200" value="20">
         <label data-i18n="genLabel">장 자동 생성 (QR 발급)</label>
       </div>
       <button class="btn" id="genBtn" data-i18n="genBtn">QR 생성하기</button>
       <div class="manual">
-        <input id="customCode" placeholder="직접 코드 추가 (선택)" data-i18n-ph="customPlaceholder" autocomplete="off">
+        <input id="customCode" placeholder="직접 코드 추가 (선택)" data-i18n-ph="customPlaceholder" autocomplete="off" autocapitalize="characters" spellcheck="false">
         <button id="addBtn" data-i18n="add">추가</button>
       </div>
     </div>
 
     <!-- 목록 패널: 로그인한 모두에게 표시 -->
-    <div class="card">
+    <div class="card" id="usageCard">
       <h2><span class="dot"></span><span data-i18n="usageTitle">사용 현황</span></h2>
       <div class="store-sum" id="storeSum"></div>
       <div class="filter-row" id="filterRow" style="margin-top:14px">
@@ -284,7 +297,7 @@
       <button data-lang="vi">Tiếng Việt</button>
     </div>
     <h3 data-i18n="loginTitle">치맥페 바우처 로그인</h3>
-    <input id="pwInput" type="password" placeholder="비밀번호" data-i18n-ph="pwPlaceholder" autocomplete="off">
+    <input id="pwInput" type="password" inputmode="numeric" placeholder="비밀번호" data-i18n-ph="pwPlaceholder" autocomplete="off">
     <div class="err" id="pwErr"></div>
     <button class="btn" id="loginBtn" data-i18n="enter">입장</button>
     <button class="btn ghost hide" id="cancelBtn" style="margin-top:8px" data-i18n="cancel">취소</button>
@@ -463,7 +476,7 @@ function renderStoreSum() {
 function renderList() {
   const codes = Object.keys(vouchers);
   const list = document.getElementById('vList');
-  if (!codes.length) { list.innerHTML = '<div class="empty" style="grid-column:1/3">아직 발급된 바우처가 없습니다</div>'; return; }
+  if (!codes.length) { list.innerHTML = `<div class="empty" style="grid-column:1/3">${t('noVoucher')}</div>`; return; }
   list.innerHTML = '';
   codes.forEach(c => {
     const d = document.createElement('div');
@@ -475,9 +488,9 @@ function renderList() {
       const ub = document.createElement('div'); ub.className = 'badge-used'; ub.textContent = t('usedStamp'); d.appendChild(ub);
       const info = document.createElement('div');
       info.className = 'vinfo';
-      const t = new Date(vouchers[c].usedAt);
-      const hh = String(t.getHours()).padStart(2,'0'), mm = String(t.getMinutes()).padStart(2,'0');
-      info.innerHTML = `${vouchers[c].store || '미기록'}<br>${hh}:${mm}`;
+      const dt = new Date(vouchers[c].usedAt);
+      const hh = String(dt.getHours()).padStart(2,'0'), mm = String(dt.getMinutes()).padStart(2,'0');
+      info.innerHTML = `${vouchers[c].store || t('noRecord')}<br>${hh}:${mm}`;
       d.appendChild(info);
     }
     list.appendChild(d);
@@ -649,7 +662,7 @@ document.getElementById('csvBtn').onclick = () => {
     const v = vouchers[c];
     rows.push([c, v.used ? '사용' : '미사용', v.used ? (v.store||'미기록') : '', v.used ? fmtTime(v.usedAt) : '']);
   });
-  const csv = '\uFEFF' + rows.map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const csv = '﻿' + rows.map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
