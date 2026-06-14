@@ -24,7 +24,6 @@
     --border: #e6e8ec;
     --font-body: 'Gothic A1', sans-serif;
   }
-  /* 베트남어: 라틴 확장(성조) 지원 폰트로 전환 */
   body.lang-vi { --font-body: 'Be Vietnam Pro', sans-serif; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,20 +33,20 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 18px 16px 60px;
+    padding: 18px 16px 56px;
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 440px; margin: 0 auto; }
 
   /* ===== 헤더 ===== */
-  header { position: relative; text-align: center; margin: 6px 0 4px; }
-  .logo { font-size: 30px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); }
+  header { position: relative; text-align: center; margin: 4px 0 0; }
+  .logo { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); }
   .logo .em { color: var(--accent-deep); }
   .sub { margin-top: 3px; font-size: 11px; letter-spacing: 3px; color: var(--muted); font-weight: 700; }
   .mode-badge {
-    display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 700;
-    padding: 6px 14px; border-radius: 999px;
+    display: inline-block; margin-top: 11px; font-size: 12px; font-weight: 700;
+    padding: 5px 14px; border-radius: 999px;
   }
   .mode-badge.check { background: var(--green-soft); color: var(--green); }
   .mode-badge.admin { background: var(--accent-soft); color: var(--accent-deep); }
@@ -57,35 +56,34 @@
     border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 700;
   }
   .topbtn:active { background: var(--bg); }
-  .lang-mini { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+  .lang-mini { display: flex; gap: 6px; justify-content: center; margin-top: 11px; }
   .lang-mini button {
     background: var(--surface); border: 1px solid var(--border); color: var(--muted);
     border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
   }
   .lang-mini button.on { background: var(--text); color: #fff; border-color: var(--text); }
 
-  /* ===== 통계 ===== */
-  .stats { display: flex; gap: 10px; margin: 18px 0; }
-  .stat {
-    flex: 1; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 14px 8px; text-align: center;
+  /* ===== 탭 ===== */
+  .tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 5px; margin: 16px 0 14px; }
+  .tabs button {
+    flex: 1; border: none; background: transparent; color: var(--muted);
+    font-family: inherit; font-weight: 700; font-size: 14px; padding: 11px 6px; border-radius: 10px; cursor: pointer;
   }
+  .tabs button.on { background: var(--text); color: #fff; }
+
+  /* ===== 통계 ===== */
+  .stats { display: flex; gap: 10px; margin-bottom: 14px; }
+  .stat { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 8px; text-align: center; }
   .stat .n { font-size: 26px; font-weight: 900; color: var(--text); line-height: 1; }
   .stat.left .n { color: var(--accent-deep); }
   .stat .l { font-size: 11px; color: var(--muted); margin-top: 6px; font-weight: 600; }
 
   /* ===== 카드 ===== */
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 18px; padding: 18px; margin-bottom: 14px;
-  }
-  .card h2 {
-    font-size: 15px; font-weight: 800; color: var(--text);
-    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin-bottom: 14px; }
+  .card h2 { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   .card h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
-  #reader { border-radius: 14px; overflow: hidden; background: var(--bg); }
+  #reader { border-radius: 14px; overflow: hidden; background: var(--bg); min-height: 60px; }
 
   /* ===== 버튼 ===== */
   .btn {
@@ -97,27 +95,25 @@
   .btn:hover { filter: brightness(0.98); }
   .btn.ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
   .btn + .btn { margin-top: 10px; }
+  #scanBtn { margin-top: 12px; padding: 17px; font-size: 17px; }
 
   .manual { display: flex; gap: 8px; margin-top: 12px; }
   .manual input {
-    flex: 1; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); border-radius: 12px; padding: 13px 14px;
-    font-size: 16px; font-family: inherit; letter-spacing: 1px; text-transform: uppercase;
+    flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    border-radius: 12px; padding: 13px 14px; font-size: 16px; font-family: inherit;
+    letter-spacing: 1px; text-transform: uppercase;
   }
   .manual input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
-  .manual button {
-    border: none; background: var(--text); color: #fff; font-weight: 800;
-    padding: 0 18px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 15px;
-  }
+  .manual button { border: none; background: var(--text); color: #fff; font-weight: 800; padding: 0 18px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 15px; }
 
   /* ===== 결과 배너 ===== */
-  .result { border-radius: 18px; padding: 24px 20px; text-align: center; margin-bottom: 14px; display: none; animation: pop .2s ease; }
+  .result { border-radius: 18px; padding: 26px 20px; text-align: center; margin-bottom: 14px; display: none; animation: pop .2s ease; }
   @keyframes pop { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   .result.ok  { display: block; background: var(--green-soft); border: 1.5px solid var(--green); }
   .result.dup { display: block; background: var(--red-soft); border: 1.5px solid var(--red); }
   .result.bad { display: block; background: #f1f2f4; border: 1.5px solid #cbd0d6; }
-  .result .ico { font-size: 50px; line-height: 1; }
-  .result .ttl { font-size: 24px; font-weight: 900; margin: 8px 0 4px; }
+  .result .ico { font-size: 52px; line-height: 1; }
+  .result .ttl { font-size: 25px; font-weight: 900; margin: 8px 0 4px; }
   .result.ok .ttl { color: var(--green); }
   .result.dup .ttl { color: var(--red); }
   .result .meta { font-size: 13px; color: var(--muted); }
@@ -125,24 +121,15 @@
 
   /* ===== 발급 ===== */
   .gen-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
-  .gen-row input {
-    width: 72px; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); border-radius: 10px; padding: 11px; font-size: 15px; text-align: center;
-  }
+  .gen-row input { width: 72px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 11px; font-size: 15px; text-align: center; }
   .gen-row label { font-size: 14px; color: var(--muted); }
 
   /* ===== QR 카드 목록 ===== */
   .voucher-list { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .v {
-    background: var(--bg); border: 1px solid var(--border); color: var(--text);
-    border-radius: 14px; padding: 12px 8px; text-align: center; position: relative; overflow: hidden;
-  }
+  .v { background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 14px; padding: 12px 8px; text-align: center; position: relative; overflow: hidden; }
   .v.used { opacity: 0.75; }
   .v.used canvas, .v.used img { opacity: 0.3; }
-  .v.used .badge-used {
-    position: absolute; top: 8px; left: 50%; transform: translateX(-50%) rotate(-6deg);
-    font-weight: 800; color: #fff; background: var(--red); font-size: 11px; padding: 2px 8px; border-radius: 6px;
-  }
+  .v.used .badge-used { position: absolute; top: 8px; left: 50%; transform: translateX(-50%) rotate(-6deg); font-weight: 800; color: #fff; background: var(--red); font-size: 11px; padding: 2px 8px; border-radius: 6px; }
   .v .vinfo { font-size: 11px; color: var(--red); font-weight: 700; margin-top: 4px; line-height: 1.3; }
   .v canvas, .v img { width: 84px !important; height: 84px !important; margin: 0 auto; background: #fff; border-radius: 6px; }
   .v .vc { font-family: ui-monospace, monospace; font-size: 11px; margin-top: 6px; font-weight: 700; letter-spacing: 1px; }
@@ -151,7 +138,7 @@
   .toolbar .btn { font-size: 14px; padding: 12px; }
 
   .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 20px 0; }
-  .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 22px; line-height: 1.7; }
+  .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 18px; line-height: 1.7; }
 
   /* ===== 사용 현황 표 ===== */
   .tbl-wrap { margin-top: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -164,10 +151,7 @@
   .pill.ok { background: var(--green-soft); color: var(--green); }
   .pill.no { background: var(--accent-soft); color: var(--accent-deep); }
   .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-  .filter-row button {
-    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-    border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
-  }
+  .filter-row button { background: var(--surface); border: 1px solid var(--border); color: var(--muted); border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
   .filter-row button.on { background: var(--text); color: #fff; border-color: var(--text); }
 
   /* ===== 매장별 요약 ===== */
@@ -182,10 +166,7 @@
   .modal-box { background: var(--surface); border-radius: 20px; padding: 26px 24px; width: 100%; max-width: 330px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.18); }
   .modal-box h3 { font-size: 19px; font-weight: 900; margin-bottom: 16px; color: var(--text); }
   .lang-toggle { display: flex; gap: 6px; justify-content: center; margin-bottom: 18px; }
-  .lang-toggle button {
-    flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--muted);
-    border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
-  }
+  .lang-toggle button { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--muted); border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
   .lang-toggle button.on { background: var(--text); color: #fff; border-color: var(--text); }
   .modal-box input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 12px; padding: 14px; font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 10px; }
   .modal-box input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
@@ -196,8 +177,8 @@
   @media print {
     @page { margin: 12mm; }
     body { background: #fff; padding: 0; }
-    header, .lang-mini, .stats, .mode-badge, #checkView, #issueCard, #usageCard,
-    .note, #printCard > h2, #printCard .toolbar { display: none !important; }
+    header, .tabs, .stats, #scanView, #usageView, .note, #issueCard,
+    #printCard > h2, #printCard .toolbar { display: none !important; }
     .card { border: none; padding: 0; margin: 0; background: #fff; }
     .voucher-list { grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .v { border: 1px solid #ddd; break-inside: avoid; padding: 14px 8px; opacity: 1 !important; }
@@ -211,55 +192,43 @@
     <button class="topbtn" id="topBtn">매장 로그인</button>
     <div class="logo">치맥페 <span class="em">2026</span></div>
     <div class="sub">VOUCHER SYSTEM</div>
-    <div id="badge" class="mode-badge check">검증 모드 · 확인 전용</div>
+    <div id="badge" class="mode-badge check">검증 모드</div>
     <div class="lang-mini">
       <button data-lang="ko" class="on">한국어</button>
       <button data-lang="vi">Tiếng Việt</button>
     </div>
   </header>
 
-  <div class="stats">
-    <div class="stat"><div class="n" id="stTotal">0</div><div class="l" data-i18n="issued">발급</div></div>
-    <div class="stat"><div class="n" id="stUsed">0</div><div class="l" data-i18n="used">사용</div></div>
-    <div class="stat left"><div class="n" id="stLeft">0</div><div class="l" data-i18n="left">잔여</div></div>
-  </div>
+  <!-- 탭 -->
+  <nav class="tabs hide" id="tabs">
+    <button data-view="scan" class="on" data-i18n="tabScan">스캔</button>
+    <button data-view="usage" data-i18n="tabUsage">현황</button>
+    <button data-view="manage" class="hide" id="tabManage" data-i18n="tabManage">관리</button>
+  </nav>
 
-  <!-- 검증(메인) 화면 -->
-  <div id="checkView">
+  <!-- ===== 스캔 ===== -->
+  <section id="scanView">
     <div class="result" id="result"></div>
     <div class="card">
       <h2><span class="dot"></span><span data-i18n="scanTitle">QR 스캔으로 확인</span></h2>
       <div id="reader"></div>
-      <button class="btn" id="scanBtn" style="margin-top:12px" data-i18n="scanStart">카메라 시작</button>
+      <button class="btn" id="scanBtn" data-i18n="scanStart">카메라 시작</button>
       <div class="manual">
         <input id="manualCode" placeholder="코드 직접 입력" data-i18n-ph="codePlaceholder" autocomplete="off" autocapitalize="characters" spellcheck="false">
         <button id="manualBtn" data-i18n="check">확인</button>
       </div>
     </div>
-    <p class="note">
-      <span data-i18n="checkNote1">매장 비밀번호로 로그인한 뒤 QR을 스캔하세요.</span><br>
-      <span data-i18n="checkNote2">사용 처리하면 어느 매장에서 썼는지 기록되고, 중복 사용은 자동 차단됩니다.</span>
-    </p>
-  </div>
+    <p class="note" data-i18n="scanNote">QR을 비추면 자동으로 확인되고, 중복 사용은 자동 차단됩니다.</p>
+  </section>
 
-  <!-- 로그인 후 화면 -->
-  <div id="adminView" class="hide">
-    <!-- 발급 패널: 마스터 관리자 전용 -->
-    <div class="card" id="issueCard">
-      <h2><span class="dot"></span><span data-i18n="issueTitle">바우처 등록·발급</span> <span style="font-size:12px;color:var(--accent-deep);font-weight:700;margin-left:auto" data-i18n="masterOnly">마스터 전용</span></h2>
-      <div class="gen-row">
-        <input id="genCount" type="number" min="1" max="200" value="20">
-        <label data-i18n="genLabel">장 자동 생성 (QR 발급)</label>
-      </div>
-      <button class="btn" id="genBtn" data-i18n="genBtn">QR 생성하기</button>
-      <div class="manual">
-        <input id="customCode" placeholder="직접 코드 추가 (선택)" data-i18n-ph="customPlaceholder" autocomplete="off" autocapitalize="characters" spellcheck="false">
-        <button id="addBtn" data-i18n="add">추가</button>
-      </div>
+  <!-- ===== 현황 ===== -->
+  <section id="usageView" class="hide">
+    <div class="stats">
+      <div class="stat"><div class="n" id="stTotal">0</div><div class="l" data-i18n="issued">발급</div></div>
+      <div class="stat"><div class="n" id="stUsed">0</div><div class="l" data-i18n="used">사용</div></div>
+      <div class="stat left"><div class="n" id="stLeft">0</div><div class="l" data-i18n="left">잔여</div></div>
     </div>
-
-    <!-- 목록 패널: 로그인한 모두에게 표시 -->
-    <div class="card" id="usageCard">
+    <div class="card">
       <h2><span class="dot"></span><span data-i18n="usageTitle">사용 현황</span></h2>
       <div class="store-sum" id="storeSum"></div>
       <div class="filter-row" id="filterRow" style="margin-top:14px">
@@ -277,8 +246,23 @@
         <button class="btn ghost" id="csvBtn" data-i18n="csv">CSV 내보내기</button>
       </div>
     </div>
+  </section>
 
-    <!-- QR 인쇄 카드: 마스터 전용 -->
+  <!-- ===== 관리 (마스터 전용) ===== -->
+  <section id="manageView" class="hide">
+    <div class="card" id="issueCard">
+      <h2><span class="dot"></span><span data-i18n="issueTitle">바우처 등록·발급</span></h2>
+      <div class="gen-row">
+        <input id="genCount" type="number" min="1" max="200" value="20">
+        <label data-i18n="genLabel">장 자동 생성 (QR 발급)</label>
+      </div>
+      <button class="btn" id="genBtn" data-i18n="genBtn">QR 생성하기</button>
+      <div class="manual">
+        <input id="customCode" placeholder="직접 코드 추가 (선택)" data-i18n-ph="customPlaceholder" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button id="addBtn" data-i18n="add">추가</button>
+      </div>
+    </div>
+
     <div class="card" id="printCard">
       <h2><span class="dot"></span><span data-i18n="printTitle">QR 카드 (인쇄·배포용)</span></h2>
       <div class="voucher-list" id="vList"><div class="empty" style="grid-column:1/3" data-i18n="noVoucher">아직 발급된 바우처가 없습니다</div></div>
@@ -287,7 +271,7 @@
       </div>
     </div>
     <p class="note" id="adminNote" data-i18n="adminNote">발급한 바우처는 모든 매장 기기에서 실시간으로 공유됩니다.</p>
-  </div>
+  </section>
 </div>
 
 <div class="modal open" id="loginModal">
@@ -313,26 +297,25 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const PREFIX = 'CMF26-';
-// 로그인 비밀번호 → 매장명. 0600은 마스터 관리자(발급 권한 보유)
 const MASTER_PW = '0600';
 
 let lang = 'ko';
 const I18N = {
   ko: {
     loginTitle:'치맥페 바우처 로그인', pwPlaceholder:'비밀번호', enter:'입장', cancel:'취소',
+    tabScan:'스캔', tabUsage:'현황', tabManage:'관리',
     issued:'발급', used:'사용', left:'잔여',
     scanTitle:'QR 스캔으로 확인', scanStart:'카메라 시작', scanStop:'카메라 끄기',
     codePlaceholder:'코드 직접 입력', check:'확인',
-    checkNote1:'매장 비밀번호로 로그인한 뒤 QR을 스캔하세요.',
-    checkNote2:'사용 처리하면 어느 매장에서 썼는지 기록되고, 중복 사용은 자동 차단됩니다.',
-    issueTitle:'바우처 등록·발급', masterOnly:'마스터 전용', genLabel:'장 자동 생성 (QR 발급)',
+    scanNote:'QR을 비추면 자동으로 확인되고, 중복 사용은 자동 차단됩니다.',
+    issueTitle:'바우처 등록·발급', genLabel:'장 자동 생성 (QR 발급)',
     genBtn:'QR 생성하기', customPlaceholder:'직접 코드 추가 (선택)', add:'추가',
     usageTitle:'사용 현황', fAll:'전체', fUsed:'사용됨', fUnused:'미사용',
     thCode:'코드', thStatus:'상태', thStore:'사용 매장', thTime:'시간',
     csv:'CSV 내보내기', printTitle:'QR 카드 (인쇄·배포용)', noVoucher:'아직 발급된 바우처가 없습니다',
     print:'QR 인쇄', adminNote:'발급한 바우처는 모든 매장 기기에서 실시간으로 공유됩니다.',
     storeLogin:'매장 로그인', logout:'로그아웃',
-    badgeCheck:'검증 모드 · 매장 로그인 필요', badgeMaster:' · 마스터', badgeStore:' · 로그인됨',
+    badgeCheck:'검증 모드', badgeMaster:'마스터', badgeStore:'',
     resOk:'사용 가능!', resOkMeta:'· 사용 처리됨',
     resDup:'이미 사용됨', resDupMeta:(s,t)=>`<b>${s}</b>에서 ${t}에 사용 완료`,
     resNoStore:'매장 로그인 필요', resNoStoreMeta:'우측 상단에서 매장 비밀번호로 로그인하세요',
@@ -344,19 +327,19 @@ const I18N = {
   },
   vi: {
     loginTitle:'Đăng nhập Voucher Chimaek', pwPlaceholder:'Mật khẩu', enter:'Vào', cancel:'Hủy',
+    tabScan:'Quét', tabUsage:'Tình trạng', tabManage:'Quản lý',
     issued:'Đã phát', used:'Đã dùng', left:'Còn lại',
     scanTitle:'Quét mã QR để kiểm tra', scanStart:'Bật camera', scanStop:'Tắt camera',
     codePlaceholder:'Nhập mã trực tiếp', check:'Kiểm tra',
-    checkNote1:'Đăng nhập bằng mật khẩu cửa hàng rồi quét mã QR.',
-    checkNote2:'Khi xử lý sẽ ghi lại cửa hàng đã dùng, và tự động chặn dùng trùng lặp.',
-    issueTitle:'Đăng ký · Phát voucher', masterOnly:'Chỉ quản trị', genLabel:'voucher tạo tự động (phát QR)',
+    scanNote:'Hướng camera vào mã QR để kiểm tra tự động; dùng trùng sẽ bị chặn.',
+    issueTitle:'Đăng ký · Phát voucher', genLabel:'voucher tạo tự động (phát QR)',
     genBtn:'Tạo mã QR', customPlaceholder:'Thêm mã thủ công (tùy chọn)', add:'Thêm',
     usageTitle:'Tình trạng sử dụng', fAll:'Tất cả', fUsed:'Đã dùng', fUnused:'Chưa dùng',
     thCode:'Mã', thStatus:'Trạng thái', thStore:'Cửa hàng', thTime:'Thời gian',
     csv:'Xuất CSV', printTitle:'Thẻ QR (để in · phân phát)', noVoucher:'Chưa có voucher nào được phát',
     print:'In QR', adminNote:'Voucher đã phát được chia sẻ thời gian thực trên mọi thiết bị cửa hàng.',
     storeLogin:'Đăng nhập cửa hàng', logout:'Đăng xuất',
-    badgeCheck:'Chế độ kiểm tra · Cần đăng nhập cửa hàng', badgeMaster:' · Quản trị', badgeStore:' · Đã đăng nhập',
+    badgeCheck:'Chế độ kiểm tra', badgeMaster:'Quản trị', badgeStore:'',
     resOk:'Hợp lệ!', resOkMeta:'· Đã xử lý',
     resDup:'Đã sử dụng', resDupMeta:(s,t)=>`Đã dùng tại <b>${s}</b> lúc ${t}`,
     resNoStore:'Cần đăng nhập cửa hàng', resNoStoreMeta:'Đăng nhập bằng mật khẩu cửa hàng ở góc trên bên phải',
@@ -378,25 +361,22 @@ const STORES = {
   '0605': '루비에치킨'
 };
 let vouchers = {};
-let scanner = null, scanning = false, lastScan = 0;
-let isAdmin = false;
-let currentStore = null; // 로그인한 매장명
-let isMaster = false;    // 마스터 관리자 여부
+let scanner = null, scanning = false, lastScan = 0, cameraEnabled = false;
+let isAdmin = false, isMaster = false;
+let currentStore = null;
+let view = 'scan';
+let resultTimer = null;
 
-// 전체 바우처를 Supabase에서 불러와 vouchers 객체로 변환
+// ===== 데이터 =====
 async function load() {
   try {
     const { data, error } = await sb.from('vouchers').select('*');
     if (error) throw error;
     vouchers = {};
-    (data || []).forEach(row => {
-      vouchers[row.code] = { used: row.used, usedAt: row.used_at, store: row.store };
-    });
+    (data || []).forEach(row => { vouchers[row.code] = { used: row.used, usedAt: row.used_at, store: row.store }; });
   } catch(e) { console.error('불러오기 실패', e); }
   render();
 }
-
-// 발급: 여러 코드를 한 번에 insert
 async function saveNew(codes) {
   const rows = codes.map(c => ({ code: c, used: false, used_at: null, store: null }));
   try {
@@ -404,22 +384,16 @@ async function saveNew(codes) {
     if (error) throw error;
   } catch(e) { console.error('발급 저장 실패', e); alert('발급 저장에 실패했습니다. 연결을 확인하세요.'); }
 }
-
-// 사용 처리는 redeem() 안에서 조건부 update로 직접 수행합니다.
-
-// 실시간 구독: 다른 기기의 변경을 즉시 반영
 function subscribeRealtime() {
   sb.channel('vouchers-changes')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'vouchers' }, payload => {
       const row = payload.new;
-      if (row && row.code) {
-        vouchers[row.code] = { used: row.used, usedAt: row.used_at, store: row.store };
-        render();
-      }
+      if (row && row.code) { vouchers[row.code] = { used: row.used, usedAt: row.used_at, store: row.store }; render(); }
     })
     .subscribe();
 }
 
+// ===== 렌더 =====
 function render() {
   const codes = Object.keys(vouchers);
   const used = codes.filter(c => vouchers[c].used).length;
@@ -430,24 +404,18 @@ function render() {
 }
 
 let usageFilter = 'all';
-
 function fmtTime(ts) {
-  const t = new Date(ts);
-  const M = t.getMonth()+1, D = t.getDate();
-  const hh = String(t.getHours()).padStart(2,'0'), mm = String(t.getMinutes()).padStart(2,'0');
+  const d = new Date(ts);
+  const M = d.getMonth()+1, D = d.getDate();
+  const hh = String(d.getHours()).padStart(2,'0'), mm = String(d.getMinutes()).padStart(2,'0');
   return `${M}/${D} ${hh}:${mm}`;
 }
-
 function renderUsage() {
   const body = document.getElementById('usageBody');
   let codes = Object.keys(vouchers).sort();
   if (usageFilter === 'used') codes = codes.filter(c => vouchers[c].used);
   if (usageFilter === 'unused') codes = codes.filter(c => !vouchers[c].used);
-  if (!codes.length) {
-    body.innerHTML = `<tr><td colspan="4" class="empty" style="padding:18px">${t('noRows')}</td></tr>`;
-    return;
-  }
-  // 사용된 것을 시간순 위로, 미사용은 아래로
+  if (!codes.length) { body.innerHTML = `<tr><td colspan="4" class="empty" style="padding:18px">${t('noRows')}</td></tr>`; return; }
   codes.sort((a,b) => {
     const ua = vouchers[a].used, ub = vouchers[b].used;
     if (ua && ub) return vouchers[b].usedAt - vouchers[a].usedAt;
@@ -464,13 +432,11 @@ function renderUsage() {
       <td><span class="pill no">${t('pillUnused')}</span></td><td>—</td><td>—</td></tr>`;
   }).join('');
 }
-
 function renderStoreSum() {
   const sum = {};
   Object.values(STORES).forEach(s => { if (s !== '마스터 관리자') sum[s] = 0; });
   Object.values(vouchers).forEach(v => { if (v.used && v.store && v.store in sum) sum[v.store]++; });
-  const el = document.getElementById('storeSum');
-  el.innerHTML = Object.keys(sum).map(s =>
+  document.getElementById('storeSum').innerHTML = Object.keys(sum).map(s =>
     `<div class="s"><span class="nm">${s}</span><span class="ct">${sum[s]}</span></div>`).join('');
 }
 function renderList() {
@@ -486,8 +452,7 @@ function renderList() {
     d.appendChild(lbl);
     if (vouchers[c].used) {
       const ub = document.createElement('div'); ub.className = 'badge-used'; ub.textContent = t('usedStamp'); d.appendChild(ub);
-      const info = document.createElement('div');
-      info.className = 'vinfo';
+      const info = document.createElement('div'); info.className = 'vinfo';
       const dt = new Date(vouchers[c].usedAt);
       const hh = String(dt.getHours()).padStart(2,'0'), mm = String(dt.getMinutes()).padStart(2,'0');
       info.innerHTML = `${vouchers[c].store || t('noRecord')}<br>${hh}:${mm}`;
@@ -498,11 +463,14 @@ function renderList() {
   });
 }
 
+// ===== 결과 =====
 function showResult(type, code) {
   const r = document.getElementById('result');
+  clearTimeout(resultTimer);
   r.className = 'result ' + (type === 'nostore' ? 'bad' : type);
   if (type === 'ok') {
     r.innerHTML = `<div class="ico">🍺</div><div class="ttl">${t('resOk')}</div><div class="meta">${currentStore} ${t('resOkMeta')}</div><div class="code">${code}</div>`;
+    resultTimer = setTimeout(() => { r.className = 'result'; }, 6000); // 성공은 잠시 후 자동으로 비움
   } else if (type === 'dup') {
     const tm = new Date(vouchers[code].usedAt);
     const hh = String(tm.getHours()).padStart(2,'0'), mm = String(tm.getMinutes()).padStart(2,'0');
@@ -519,33 +487,24 @@ async function redeem(code) {
   code = (code||'').trim().toUpperCase();
   if (!code) return;
   if (!currentStore) { showResult('nostore', code); beep(false); return; }
-  // 접두사 없이 입력한 경우 자동 보정 (예: XK825 → CMF26-XK825)
-  if (!(code in vouchers) && !code.startsWith(PREFIX) && (PREFIX + code) in vouchers) {
-    code = PREFIX + code;
-  }
-  // DB에서 해당 코드 최신 상태 단건 조회
+  if (!(code in vouchers) && !code.startsWith(PREFIX) && (PREFIX + code) in vouchers) code = PREFIX + code;
   let row = null;
-  try {
-    const { data } = await sb.from('vouchers').select('*').eq('code', code).maybeSingle();
-    row = data;
-  } catch(e) { console.error(e); }
+  try { const { data } = await sb.from('vouchers').select('*').eq('code', code).maybeSingle(); row = data; }
+  catch(e) { console.error(e); }
   if (!row) { showResult('bad', code); beep(false); return; }
   vouchers[code] = { used: row.used, usedAt: row.used_at, store: row.store };
   if (row.used) { showResult('dup', code); beep(false); render(); return; }
-  // 아직 미사용일 때만 업데이트 (used=false 조건을 걸어 동시 사용 경쟁 차단)
   const usedAt = Date.now();
   const { data: updated, error } = await sb.from('vouchers')
     .update({ used: true, used_at: usedAt, store: currentStore })
     .eq('code', code).eq('used', false).select();
   if (error || !updated || updated.length === 0) {
-    // 그 사이 다른 기기가 먼저 사용함
     try { const { data } = await sb.from('vouchers').select('*').eq('code', code).maybeSingle();
       if (data) vouchers[code] = { used: data.used, usedAt: data.used_at, store: data.store }; } catch(e){}
     showResult('dup', code); beep(false); render(); return;
   }
   vouchers[code] = { used: true, usedAt: usedAt, store: currentStore };
-  render();
-  showResult('ok', code); beep(true);
+  render(); showResult('ok', code); beep(true);
 }
 
 function beep(ok) {
@@ -560,16 +519,47 @@ function beep(ok) {
   } catch(e){}
 }
 
+// ===== 카메라 =====
+function updateScanBtn() {
+  scanBtn.textContent = scanning ? t('scanStop') : t('scanStart');
+  scanBtn.classList.toggle('ghost', scanning);
+}
+async function startScan() {
+  if (scanning) return;
+  if (!scanner) scanner = new Html5Qrcode('reader');
+  try {
+    await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: 220 },
+      (txt) => { const now = Date.now(); if (now - lastScan < 1500) return; lastScan = now; redeem(txt); }, () => {});
+    scanning = true; cameraEnabled = true; updateScanBtn();
+  } catch(e) { alert(t('alCam')); }
+}
+async function stopScan() {
+  if (!scanning) return;
+  try { await scanner.stop(); } catch(e){}
+  scanning = false; updateScanBtn();
+}
+
+// ===== 화면 전환 =====
+function showView(v) {
+  view = v;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.view === v));
+  document.getElementById('scanView').classList.toggle('hide', v !== 'scan');
+  document.getElementById('usageView').classList.toggle('hide', v !== 'usage');
+  document.getElementById('manageView').classList.toggle('hide', v !== 'manage');
+  if (v === 'scan') { if (cameraEnabled && !scanning) startScan(); }
+  else if (scanning) { stopScan(); }
+  if (v === 'usage' || v === 'manage') render();
+}
+
 function setMode(loggedIn) {
   isAdmin = loggedIn;
-  document.getElementById('adminView').classList.toggle('hide', !loggedIn);
-  // 발급 패널·초기화는 마스터에게만
-  document.getElementById('issueCard').classList.toggle('hide', !(loggedIn && isMaster));
-  document.getElementById('printCard').classList.toggle('hide', !(loggedIn && isMaster));
+  document.getElementById('tabs').classList.toggle('hide', !loggedIn);
+  document.getElementById('tabManage').classList.toggle('hide', !(loggedIn && isMaster));
   const badge = document.getElementById('badge');
   if (loggedIn) {
     badge.className = 'mode-badge admin';
-    badge.textContent = currentStore + (isMaster ? t('badgeMaster') : t('badgeStore'));
+    const tag = isMaster ? t('badgeMaster') : t('badgeStore');
+    badge.textContent = currentStore + (tag ? ' · ' + tag : '');
     document.getElementById('topBtn').textContent = t('logout');
   } else {
     badge.className = 'mode-badge check';
@@ -579,9 +569,11 @@ function setMode(loggedIn) {
   render();
 }
 
+// ===== 이벤트 =====
 document.getElementById('topBtn').onclick = () => {
   if (isAdmin) {
-    currentStore = null; isMaster = false; setMode(false);
+    stopScan();
+    currentStore = null; isMaster = false; cameraEnabled = false; setMode(false);
     document.getElementById('mainWrap').classList.add('hide');
     document.getElementById('loginModal').classList.add('open');
     document.getElementById('pwInput').focus();
@@ -598,27 +590,20 @@ document.getElementById('loginBtn').onclick = () => {
   const pw = pwInput.value.trim();
   const store = STORES[pw];
   if (store) {
-    currentStore = store;
-    isMaster = (pw === MASTER_PW);
+    currentStore = store; isMaster = (pw === MASTER_PW);
     document.getElementById('loginModal').classList.remove('open');
     document.getElementById('mainWrap').classList.remove('hide');
-    pwErr.textContent=''; pwInput.value=''; setMode(true);
+    pwErr.textContent=''; pwInput.value='';
+    setMode(true); showView('scan');
   } else { pwErr.textContent = t('pwWrong'); }
 };
 document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key==='Enter') loginBtn.click(); });
 
 document.getElementById('manualBtn').onclick = () => { redeem(manualCode.value); manualCode.value = ''; };
 document.getElementById('manualCode').addEventListener('keydown', e => { if (e.key==='Enter') manualBtn.click(); });
+document.getElementById('scanBtn').onclick = () => { scanning ? stopScan() : startScan(); };
 
-document.getElementById('scanBtn').onclick = async () => {
-  if (scanning) { await scanner.stop(); scanning = false; scanBtn.textContent = t('scanStart'); return; }
-  if (!scanner) scanner = new Html5Qrcode('reader');
-  try {
-    await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: 220 },
-      (txt) => { const now = Date.now(); if (now - lastScan < 1500) return; lastScan = now; redeem(txt); }, () => {});
-    scanning = true; scanBtn.textContent = t('scanStop');
-  } catch(e) { alert(t('alCam')); }
-};
+document.querySelectorAll('#tabs button').forEach(btn => { btn.onclick = () => showView(btn.dataset.view); });
 
 document.getElementById('genBtn').onclick = async () => {
   if (!isMaster) { alert(t('alGen')); return; }
@@ -646,7 +631,6 @@ document.getElementById('addBtn').onclick = async () => {
 };
 document.getElementById('printBtn').onclick = () => window.print();
 
-// 사용 현황 필터
 document.querySelectorAll('#filterRow button').forEach(btn => {
   btn.onclick = () => {
     usageFilter = btn.dataset.f;
@@ -655,7 +639,6 @@ document.querySelectorAll('#filterRow button').forEach(btn => {
   };
 });
 
-// CSV 내보내기
 document.getElementById('csvBtn').onclick = () => {
   const rows = [['코드','상태','사용매장','사용시간']];
   Object.keys(vouchers).sort().forEach(c => {
@@ -665,34 +648,25 @@ document.getElementById('csvBtn').onclick = () => {
   const csv = '﻿' + rows.map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'chimac_voucher_' + Date.now() + '.csv';
+  const a = document.createElement('a'); a.href = url; a.download = 'chimac_voucher_' + Date.now() + '.csv';
   a.click(); URL.revokeObjectURL(url);
 };
 
 function applyLang() {
-  // 베트남어일 때 폰트 전환
   document.body.classList.toggle('lang-vi', lang === 'vi');
-  // data-i18n 텍스트 교체
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
     if (I18N[lang][k] !== undefined) el.textContent = I18N[lang][k];
   });
-  // placeholder 교체
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const k = el.getAttribute('data-i18n-ph');
     if (I18N[lang][k] !== undefined) el.placeholder = I18N[lang][k];
   });
-  // 토글 버튼 활성 표시
   document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
-  // 동적 영역 갱신
   setMode(isAdmin);
-  if (scanning) scanBtn.textContent = t('scanStop'); else scanBtn.textContent = t('scanStart');
+  updateScanBtn();
 }
-
-document.querySelectorAll('[data-lang]').forEach(btn => {
-  btn.onclick = () => { lang = btn.dataset.lang; applyLang(); };
-});
+document.querySelectorAll('[data-lang]').forEach(btn => { btn.onclick = () => { lang = btn.dataset.lang; applyLang(); }; });
 
 setMode(false);
 applyLang();
