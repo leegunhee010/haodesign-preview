@@ -325,13 +325,20 @@
     });
   }
 
-  /* ---- 제작설비 컬럼: 포트폴리오에서 카테고리별 대표 사진 주입 (about) ---- */
-  document.querySelectorAll(".fac__col[data-cat]").forEach(function (col) {
+  /* ---- 제작설비 컬럼: 슬롯 지정 우선, 없으면 포트폴리오 자동 (about) ---- */
+  var imgSlots = (window.HAO && HAO.getSlots) ? HAO.getSlots() : {};
+  document.querySelectorAll(".fac__col[data-cat]").forEach(function (col, ci) {
     var cat = col.getAttribute("data-cat");
-    var w = works.filter(function (x) { return x.c === cat; })[0] || works[0];
     var fig = col.querySelector(".fac__media");
-    if (!w || !fig) return;
-    var src = imgSrc(w.f).replace("/work-hd/thumb/", "/work-hd/large/");
+    if (!fig) return;
+    var ov = imgSlots["about_fac_" + ci];
+    var src;
+    if (ov) src = ov;
+    else {
+      var w = works.filter(function (x) { return x.c === cat; })[0] || works[0];
+      if (!w) return;
+      src = imgSrc(w.f).replace("/work-hd/thumb/", "/work-hd/large/");
+    }
     fig.innerHTML = '<img src="' + src + '" alt="" loading="lazy" />';
   });
 

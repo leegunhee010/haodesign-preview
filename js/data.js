@@ -513,6 +513,8 @@
     getHero: function () { return load("hao_hero", DEFAULT_HERO); },
     getReviews: function () { return load("hao_reviews", DEFAULT_REVIEWS); },
     getFeatured: function () { return load("hao_featured", DEFAULT_FEATURED); },
+    /* 페이지별 이미지 슬롯 오버라이드 (id → 이미지). 비어있으면 포트폴리오 자동 */
+    getSlots: function () { return loadObj("hao_imgslots", {}); },
     getLogo: function () { var v = localStorage.getItem("hao_logo"); return v && v.length ? v : DEFAULT_LOGO; },
     getPartners: function () { return load("hao_partners", DEFAULT_PARTNERS); },
     getGov: function () { return load("hao_gov", DEFAULT_GOV); },

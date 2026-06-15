@@ -19,7 +19,7 @@
   <meta name="twitter:image" content="https://haodesign.co.kr/assets/work-hd/large/w402.jpg" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-  <link rel="stylesheet" href="css/style.css?v=86" />
+  <link rel="stylesheet" href="css/style.css?v=87" />
 </head>
 <body>
   <div class="progress" id="progress" aria-hidden="true"></div>
@@ -229,9 +229,9 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=12"></script>
+  <script src="js/data.js?v=13"></script>
 
-  <script src="js/main.js?v=39"></script>
+  <script src="js/main.js?v=40"></script>
   <script>
   (function () {
     "use strict";
@@ -244,14 +244,19 @@
     var panels = [].slice.call(stage.children);
     var n = items.length;
 
-    /* 패널 이미지: 포트폴리오에서 카테고리별 대표작 */
-    panels.forEach(function (p) {
+    /* 패널 이미지: 슬롯 지정 우선, 없으면 포트폴리오 자동 */
+    var slots = HAO.getSlots ? HAO.getSlots() : {};
+    panels.forEach(function (p, pi) {
       var cat = p.getAttribute("data-cat");
-      var w = HAO.getWorks().filter(function (x) { return x.c === cat; })[0];
-      if (w) {
-        p.querySelector(".hway__img").innerHTML =
-          '<img src="' + HAO.imgSrc(w.f).replace("/work-hd/thumb/", "/work-hd/large/") + '" alt="" loading="lazy" />';
+      var ov = slots["about_way_" + pi];
+      var src;
+      if (ov) src = ov;
+      else {
+        var w = HAO.getWorks().filter(function (x) { return x.c === cat; })[0];
+        if (!w) return;
+        src = HAO.imgSrc(w.f).replace("/work-hd/thumb/", "/work-hd/large/");
       }
+      p.querySelector(".hway__img").innerHTML = '<img src="' + src + '" alt="" loading="lazy" />';
     });
 
     var idx = 0;
