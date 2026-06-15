@@ -483,8 +483,10 @@ async function saveAccount() {
   const role = accRole.value;
   if (!name || !pw) { alert(t('accNeedFields')); return; }
   if (pw !== editingPw && accounts[pw]) { alert(t('accDupPw')); return; }
+  if (!storesTableOk) { alert('Supabase에 stores 테이블이 없어 저장할 수 없습니다.'); return; }
+  const { error } = await sb.from('stores').upsert({ pw, name, role });
+  if (error) { alert('저장 실패: ' + error.message + '\n\nSupabase에서 stores 테이블의 권한(RLS) 설정을 확인하세요.'); return; }
   accounts[pw] = { name, role };
-  if (storesTableOk) { try { await sb.from('stores').upsert({ pw, name, role }); } catch(e){ console.error(e); } }
   editingPw = null; accName.value = ''; accPw.value = ''; accRole.value = 'store';
   renderAccounts(); renderStoreSum();
 }
@@ -498,8 +500,11 @@ async function deleteAccount(pw) {
   const masters = Object.values(accounts).filter(a => a.role === 'master');
   if (accounts[pw] && accounts[pw].role === 'master' && masters.length <= 1) { alert(t('accLastMaster')); return; }
   if (!confirm(t('accDelConfirm'))) return;
+  if (storesTableOk) {
+    const { error } = await sb.from('stores').delete().eq('pw', pw);
+    if (error) { alert('삭제 실패: ' + error.message); return; }
+  }
   delete accounts[pw];
-  if (storesTableOk) { try { await sb.from('stores').delete().eq('pw', pw); } catch(e){ console.error(e); } }
   if (editingPw === pw) { editingPw = null; accName.value=''; accPw.value=''; accRole.value='store'; }
   renderAccounts(); renderStoreSum();
 }
