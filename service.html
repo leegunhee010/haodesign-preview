@@ -164,7 +164,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=9"></script>
+  <script src="js/data.js?v=10"></script>
   <script src="js/main.js?v=37"></script>
   <script>
   (function () {
@@ -177,7 +177,32 @@
     var cat = CATS[key];
     var seo = cat.seo;
 
-    document.title = cat.label + " | HAO DESIGN";
+    /* ---- 카테고리별 SEO (제목·설명·canonical·OG) ---- */
+    (function () {
+      var g = HAO.getSeo();
+      var base = g.siteUrl.replace(/\/$/, "");
+      var url = base + "/service.html?cat=" + key;
+      var ttl = cat.seoTitle || (cat.label + " | HAO DESIGN");
+      var dsc = cat.seoDesc || cat.desc;
+      var ogImg = /^https?:/.test(g.ogImage) ? g.ogImage : base + "/" + g.ogImage.replace(/^\//, "");
+      document.title = ttl;
+      function m(sel, attr, k, v) {
+        var el = document.head.querySelector(sel);
+        if (!el) { el = document.createElement("meta"); el.setAttribute(attr, k); document.head.appendChild(el); }
+        el.setAttribute("content", v);
+      }
+      m('meta[name="description"]', "name", "description", dsc);
+      var can = document.head.querySelector('link[rel="canonical"]');
+      if (!can) { can = document.createElement("link"); can.setAttribute("rel", "canonical"); document.head.appendChild(can); }
+      can.setAttribute("href", url);
+      m('meta[property="og:title"]', "property", "og:title", ttl);
+      m('meta[property="og:description"]', "property", "og:description", dsc);
+      m('meta[property="og:url"]', "property", "og:url", url);
+      m('meta[property="og:image"]', "property", "og:image", ogImg);
+      m('meta[name="twitter:title"]', "name", "twitter:title", ttl);
+      m('meta[name="twitter:description"]', "name", "twitter:description", dsc);
+    })();
+
     document.getElementById("svCrumb").textContent = cat.label;
     document.getElementById("svDesc").textContent = cat.desc;
     document.getElementById("svEng").textContent = cat.eng;
