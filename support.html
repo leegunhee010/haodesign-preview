@@ -157,26 +157,11 @@
         <div class="tstep"><span class="tstep__no">05</span><h3>바우처 정산</h3><p>운영기관 · 수행기관 간 사업 비용을 정산합니다.</p></div>
       </div>
     </section>
-
-    <!-- ===== 수행기관 로고 롤링 ===== -->
+    <!-- ===== 수행기관 로고 롤링 (관리자 데이터로 렌더) ===== -->
     <div class="gov-band" aria-hidden="true">
       <div class="gov-band__track">
-        <div class="gov-band__set">
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-        </div>
-        <div class="gov-band__set">
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-          <img src="assets/gov/gov_export.png" alt="" /><img src="assets/gov/gov_mss.png" alt="" /><img src="assets/gov/gov_sbiz.png" alt="" />
-        </div>
+        <div class="gov-band__set" id="govSetA"></div>
+        <div class="gov-band__set" id="govSetB"></div>
       </div>
     </div>
 
@@ -264,8 +249,22 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=10"></script>
+  <script src="js/data.js?v=11"></script>
 
-  <script src="js/main.js?v=37"></script>
+  <script src="js/main.js?v=38"></script>
+  <script>
+  (function () {
+    "use strict";
+    /* 수행기관 로고: 관리자 '이미지·로고' 탭 데이터 (이음새 없게 충분히 반복) */
+    if (!window.HAO || !HAO.getGov) return;
+    var gov = HAO.getGov();
+    if (!gov.length) return;
+    var unit = gov.map(function (s) { return '<img src="' + s + '" alt="" />'; }).join("");
+    var rep = Math.max(3, Math.ceil(18 / gov.length));
+    var html = ""; for (var i = 0; i < rep; i++) html += unit;
+    document.getElementById("govSetA").innerHTML = html;
+    document.getElementById("govSetB").innerHTML = html;
+  })();
+  </script>
 </body>
 </html>

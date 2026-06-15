@@ -116,6 +116,16 @@
     }
   ];
 
+  /* 로고 (헤더·푸터 공통) */
+  var DEFAULT_LOGO = "assets/img/logo.png";
+
+  /* 파트너 로고 (메인 하단 흐르는 로고) */
+  var DEFAULT_PARTNERS = [46, 48, 50, 52, 54, 56, 58, 68, 70, 72, 74, 76, 78, 80, 89, 91, 93, 95, 97, 99]
+    .map(function (n) { return "assets/partners/p" + n + ".png"; });
+
+  /* 수행기관 로고 (지원사업 페이지 다크 밴드) */
+  var DEFAULT_GOV = ["assets/gov/gov_export.png", "assets/gov/gov_mss.png", "assets/gov/gov_sbiz.png"];
+
   /* 고객 후기 (관리자 '고객 후기' 탭에서 편집) — logo: 이미지 경로 또는 업로드(data:) */
   var DEFAULT_REVIEWS = [
     { logo: "assets/partners/p46.png", msg: "정보 정리부터 사진까지 알아서 챙겨주셔서 편했어요. 거래처 반응이 확실히 좋아졌습니다.", cite: "제조업 마케팅팀 김OO" },
@@ -499,6 +509,9 @@
     getPosts: function () { return load("hao_posts", DEFAULT_POSTS); },
     getHero: function () { return load("hao_hero", DEFAULT_HERO); },
     getReviews: function () { return load("hao_reviews", DEFAULT_REVIEWS); },
+    getLogo: function () { var v = localStorage.getItem("hao_logo"); return v && v.length ? v : DEFAULT_LOGO; },
+    getPartners: function () { return load("hao_partners", DEFAULT_PARTNERS); },
+    getGov: function () { return load("hao_gov", DEFAULT_GOV); },
     /* 카피: 기본값에 저장된 수정값(hao_copy {key:value})을 덧입혀 반환 */
     getCopy: function () {
       var ov = loadObj("hao_copy", {});

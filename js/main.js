@@ -193,22 +193,32 @@
     }).join("");
   }
 
-  /* ---- Inject marquee images ---- */
+  /* ---- 로고 적용 (헤더·푸터 공통, 관리자 수정분) ---- */
+  if (window.HAO && HAO.getLogo) {
+    var logoSrc = HAO.getLogo();
+    document.querySelectorAll(".brand__logo, .footer__logo").forEach(function (im) { im.src = logoSrc; });
+  }
+
+  /* ---- Inject marquee images (포트폴리오에서 끌어옴 — 관리자 수정 반영) ---- */
   function fillTrack(el, list) {
     if (!el) return;
     var html = "";
-    // duplicate for seamless loop
     for (var d = 0; d < 2; d++) {
-      list.forEach(function (f) {
-        html += '<img src="assets/work/' + f + '.jpeg" alt="" loading="lazy" />';
+      list.forEach(function (w) {
+        html += '<img src="' + imgSrc(w.f) + '" alt="" loading="lazy" />';
       });
     }
     el.innerHTML = html;
   }
   var trackTop = document.getElementById("trackTop");
   var trackBot = document.getElementById("trackBot");
-  fillTrack(trackTop, marquee.slice(0, 10));
-  fillTrack(trackBot, marquee.slice(10));
+  if (trackTop && works.length) {
+    var mq1 = works.slice(0, 10);
+    var mq2 = works.slice(10, 20);
+    if (!mq2.length) mq2 = works.slice(0, 10);
+    fillTrack(trackTop, mq1);
+    fillTrack(trackBot, mq2);
+  }
 
   /* ---- Trigger hero reveal on load ---- */
   window.addEventListener("load", function () { document.body.classList.add("is-ready"); });
@@ -531,20 +541,21 @@
     t.innerHTML = unit + unit;
   });
 
-  /* ---- Partners logo marquee (haoz.co.kr 로고) ---- */
-  var P_LOGOS = [46, 48, 50, 52, 54, 56, 58, 68, 70, 72, 74, 76, 78, 80, 89, 91, 93, 95, 97, 99];
-  function fillPartners(el, nums) {
+  /* ---- Partners logo marquee (관리자 '이미지·로고' 탭) ---- */
+  var P_LOGOS = (window.HAO && HAO.getPartners) ? HAO.getPartners() : [];
+  function fillPartners(el, list) {
     if (!el) return;
     var html = "";
     for (var d = 0; d < 2; d++) {
-      nums.forEach(function (n) {
-        html += '<span class="plogo"><img src="assets/partners/p' + n + '.png" alt="파트너 로고" loading="lazy" /></span>';
+      list.forEach(function (src) {
+        html += '<span class="plogo"><img src="' + src + '" alt="파트너 로고" loading="lazy" /></span>';
       });
     }
     el.innerHTML = html;
   }
-  fillPartners(document.getElementById("ptrackA"), P_LOGOS.slice(0, 10));
-  fillPartners(document.getElementById("ptrackB"), P_LOGOS.slice(10));
+  var pHalf = Math.ceil(P_LOGOS.length / 2);
+  fillPartners(document.getElementById("ptrackA"), P_LOGOS.slice(0, pHalf));
+  fillPartners(document.getElementById("ptrackB"), P_LOGOS.slice(pHalf));
 
   /* ---- Portfolio lightbox (any .wcard on any page) ---- */
   (function () {

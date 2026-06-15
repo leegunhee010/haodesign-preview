@@ -92,6 +92,12 @@
     .row .ops { display: flex; gap: 6px; flex: 0 0 auto; }
     .empty { padding: 32px 0; text-align: center; color: var(--muted); font-size: .88rem; }
 
+    /* 로고 그리드 */
+    .logogrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .logogrid .tile { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 12px; height: 76px; display: grid; place-items: center; padding: 12px; }
+    .logogrid .tile img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .logogrid .tile button { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: #d33; color: #fff; font-size: 14px; line-height: 1; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+
     /* 칼럼 본문 에디터 */
     .edbar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
     .edbar button { font-family: inherit; font-size: .8rem; font-weight: 700; padding: 7px 13px; border-radius: 8px; border: 1px solid var(--line); background: #fff; transition: .2s; }
@@ -151,6 +157,7 @@
           <button data-tab="works">포트폴리오 <span class="cnt" id="cntWorks">0</span></button>
           <button data-tab="posts">칼럼 <span class="cnt" id="cntPosts">0</span></button>
           <button data-tab="revs">고객 후기 <span class="cnt" id="cntRevs">0</span></button>
+          <button data-tab="media">이미지 · 로고</button>
           <button data-tab="inq">견적 문의 <span class="cnt" id="cntInq">0</span></button>
           <button data-tab="seo">SEO 관리</button>
           <button data-tab="set">사이트 설정</button>
@@ -312,6 +319,41 @@
           </div>
         </section>
 
+        <!-- 이미지 · 로고 -->
+        <section id="tab-media" hidden>
+          <div class="main__head"><h1>이미지 · 로고</h1></div>
+
+          <div class="panel">
+            <h2>로고 (헤더 · 푸터 공통)</h2>
+            <p class="note" style="margin-bottom:12px">전체 페이지 상단·하단에 표시되는 로고입니다. 가로형 PNG(투명 배경) 권장.</p>
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+              <img id="logoPrev" alt="" style="height:46px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px" />
+              <input type="file" id="logoFile" accept="image/*" />
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>공유 대표 이미지 (SEO · 카톡/SNS 썸네일)</h2>
+            <p class="note" style="margin-bottom:12px">링크를 공유할 때 미리보기로 뜨는 이미지입니다. 가로형(1200×630 권장).</p>
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+              <img id="ogPrev" alt="" style="height:90px;background:var(--bg);border:1px solid var(--line);border-radius:8px;object-fit:cover" />
+              <input type="file" id="ogFile" accept="image/*" />
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="main__head" style="margin-bottom:14px"><h2 style="margin:0">파트너 로고 (메인 하단 흐르는 로고)</h2>
+              <span><input type="file" id="ptnFile" accept="image/*" hidden /><button class="btn btn--primary" id="ptnAddBtn">+ 로고 추가</button></span></div>
+            <div id="ptnGrid" class="logogrid"></div>
+          </div>
+
+          <div class="panel">
+            <div class="main__head" style="margin-bottom:14px"><h2 style="margin:0">수행기관 로고 (지원사업 페이지)</h2>
+              <span><input type="file" id="govFile" accept="image/*" hidden /><button class="btn btn--primary" id="govAddBtn">+ 로고 추가</button></span></div>
+            <div id="govGrid" class="logogrid"></div>
+          </div>
+        </section>
+
         <!-- 문의 -->
         <section id="tab-inq" hidden>
           <div class="main__head"><h1>견적 문의</h1></div>
@@ -372,7 +414,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=10"></script>
+  <script src="js/data.js?v=11"></script>
   <script>
   (function () {
     "use strict";
@@ -424,7 +466,7 @@
     });
 
     /* ---- 탭 ---- */
-    var TABS = ["dash", "hero", "copy", "svc", "works", "posts", "revs", "inq", "seo", "set", "acc"];
+    var TABS = ["dash", "hero", "copy", "svc", "works", "posts", "revs", "media", "inq", "seo", "set", "acc"];
     document.querySelectorAll("#sideMenu button").forEach(function (b) {
       b.addEventListener("click", function () {
         document.querySelectorAll("#sideMenu button").forEach(function (x) { x.classList.remove("is-active"); });
@@ -438,8 +480,12 @@
     var posts = HAO.getPosts();
     var hero = HAO.getHero();
     var revs = HAO.getReviews();
+    var partners = HAO.getPartners();
+    var govLogos = HAO.getGov();
     function saveWorks() { if (store("hao_works", works)) renderAll(); }
     function saveRevs() { if (store("hao_reviews", revs)) renderAll(); }
+    function savePartners() { if (store("hao_partners", partners)) renderAll(); }
+    function saveGov() { if (store("hao_gov", govLogos)) renderAll(); }
     function savePosts() {
       posts.sort(function (a, b) { return (b.date || "").localeCompare(a.date || "") || b.id - a.id; });
       if (store("hao_posts", posts)) renderAll();
@@ -495,6 +541,17 @@
           '<div class="ops"><a class="btn" href="board.html#post-' + p.id + '" target="_blank" data-stop>보기 ↗</a>' +
           '<button class="btn btn--danger" data-del-post="' + p.id + '" data-stop>삭제</button></div></div>';
       }).join("") : '<p class="empty">글이 없습니다. ✚ 글쓰기를 눌러 첫 글을 작성해보세요.</p>';
+
+      /* 이미지 · 로고 */
+      $("logoPrev").src = HAO.getLogo();
+      var og = HAO.getSeo().ogImage;
+      $("ogPrev").src = /^https?:|^data:/.test(og) ? og : og;
+      $("ptnGrid").innerHTML = partners.length ? partners.map(function (s, i) {
+        return '<div class="tile"><img src="' + s + '" alt="" /><button data-del-ptn="' + i + '" title="삭제">×</button></div>';
+      }).join("") : '<p class="empty">파트너 로고가 없습니다.</p>';
+      $("govGrid").innerHTML = govLogos.length ? govLogos.map(function (s, i) {
+        return '<div class="tile"><img src="' + s + '" alt="" /><button data-del-gov="' + i + '" title="삭제">×</button></div>';
+      }).join("") : '<p class="empty">수행기관 로고가 없습니다.</p>';
 
       /* 고객 후기 */
       $("cntRevs").textContent = revs.length;
@@ -782,7 +839,7 @@
     /* ---- 목록 버튼 위임 ---- */
     document.addEventListener("click", function (e) {
       var stop = e.target.closest("[data-stop]");
-      var b = stop || e.target.closest("[data-edit-work],[data-del-work],[data-edit-post],[data-del-post],[data-edit-rev],[data-del-rev],[data-del-inq]");
+      var b = stop || e.target.closest("[data-edit-work],[data-del-work],[data-edit-post],[data-del-post],[data-edit-rev],[data-del-rev],[data-del-ptn],[data-del-gov],[data-del-inq]");
       if (!b) return;
       if (stop && !stop.hasAttribute("data-del-post") && !stop.hasAttribute("data-del-inq")) return; // 보기 링크 등은 기본 동작만
       if (b.hasAttribute("data-edit-work")) openWorkForm(parseInt(b.getAttribute("data-edit-work"), 10));
@@ -791,6 +848,8 @@
       if (b.hasAttribute("data-del-post")) { if (confirm("이 글을 삭제할까요?")) { posts = posts.filter(function (p) { return p.id !== parseInt(b.getAttribute("data-del-post"), 10); }); savePosts(); } }
       if (b.hasAttribute("data-edit-rev")) openRevForm(parseInt(b.getAttribute("data-edit-rev"), 10));
       if (b.hasAttribute("data-del-rev")) { if (confirm("이 후기를 삭제할까요?")) { revs.splice(parseInt(b.getAttribute("data-del-rev"), 10), 1); saveRevs(); } }
+      if (b.hasAttribute("data-del-ptn")) { partners.splice(parseInt(b.getAttribute("data-del-ptn"), 10), 1); savePartners(); }
+      if (b.hasAttribute("data-del-gov")) { govLogos.splice(parseInt(b.getAttribute("data-del-gov"), 10), 1); saveGov(); }
       if (b.hasAttribute("data-del-inq")) { var inq = HAO.getInquiries(); inq.splice(parseInt(b.getAttribute("data-del-inq"), 10), 1); localStorage.setItem("hao_inquiries", JSON.stringify(inq)); renderAll(); }
     });
 
@@ -824,11 +883,40 @@
       $("revForm").hidden = true; saveRevs();
     });
 
+    /* ---- 이미지 · 로고 ---- */
+    $("logoFile").addEventListener("change", function () {
+      if (!this.files[0]) return;
+      fileToDataURL(this.files[0], function (data) {
+        localStorage.setItem("hao_logo", data); renderAll();
+        alert("로고가 저장되었습니다. 사이트를 새로고침하면 반영됩니다.");
+      });
+    });
+    $("ogFile").addEventListener("change", function () {
+      if (!this.files[0]) return;
+      fileToDataURL(this.files[0], function (data) {
+        var seo = {}; try { seo = JSON.parse(localStorage.getItem("hao_seo")) || {}; } catch (e) {}
+        seo.ogImage = data; store("hao_seo", seo); renderAll();
+        alert("공유 대표 이미지가 저장되었습니다.");
+      });
+    });
+    $("ptnAddBtn").addEventListener("click", function () { $("ptnFile").click(); });
+    $("ptnFile").addEventListener("change", function () {
+      if (!this.files[0]) return;
+      fileToDataURL(this.files[0], function (data) { partners.push(data); savePartners(); });
+      this.value = "";
+    });
+    $("govAddBtn").addEventListener("click", function () { $("govFile").click(); });
+    $("govFile").addEventListener("change", function () {
+      if (!this.files[0]) return;
+      fileToDataURL(this.files[0], function (data) { govLogos.push(data); saveGov(); });
+      this.value = "";
+    });
+
     /* ---- 초기화 ---- */
     $("resetBtn").addEventListener("click", function () {
       if (!confirm("히어로 · 포트폴리오 · 칼럼 · 설정 수정 내용을 모두 버리고 기본값으로 되돌릴까요?")) return;
-      ["hao_works", "hao_posts", "hao_hero", "hao_settings", "hao_copy", "hao_service", "hao_reviews", "hao_seo"].forEach(function (k) { localStorage.removeItem(k); });
-      works = HAO.getWorks(); posts = HAO.getPosts(); hero = HAO.getHero(); revs = HAO.getReviews(); renderAll();
+      ["hao_works", "hao_posts", "hao_hero", "hao_settings", "hao_copy", "hao_service", "hao_reviews", "hao_seo", "hao_logo", "hao_partners", "hao_gov"].forEach(function (k) { localStorage.removeItem(k); });
+      works = HAO.getWorks(); posts = HAO.getPosts(); hero = HAO.getHero(); revs = HAO.getReviews(); partners = HAO.getPartners(); govLogos = HAO.getGov(); renderAll();
     });
 
     /* ---- 세션 복원 (모든 초기화 후) ---- */
