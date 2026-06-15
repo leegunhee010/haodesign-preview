@@ -164,8 +164,8 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=13"></script>
-  <script src="js/main.js?v=40"></script>
+  <script src="js/data.js?v=14"></script>
+  <script src="js/main.js?v=41"></script>
   <script>
   (function () {
     "use strict";
@@ -214,23 +214,24 @@
     document.getElementById("svSeoT2").textContent = seo.t2;
     document.getElementById("svSeoP2").textContent = seo.p2;
 
-    /* 히어로 이미지 세로 흐름 (두 컬럼, 무한 루프) + 작업 맛보기 */
     var works = HAO.getWorks().filter(function (w) { return w.c === cat.c; });
-    var flow = works.slice(0, 10);
-    if (flow.length < 4) {
-      flow = flow.concat(HAO.getWorks().filter(function (w) { return w.c !== cat.c; }).slice(0, 8 - flow.length));
+    var slots = HAO.getSlots ? HAO.getSlots() : {};
+
+    /* 히어로 흐르는 이미지 6장: 슬롯 지정 우선, 없으면 포트폴리오(그리드와 겹치지 않게 뒤에서부터) */
+    var heroSrc = [];
+    for (var hi = 0; hi < 6; hi++) {
+      var hov = slots["svc_" + key + "_hero_" + hi];
+      if (hov) heroSrc.push(hov);
+      else if (works.length) { var hw = works[(hi + 4) % works.length]; heroSrc.push(HAO.imgSrc(hw.f)); }
     }
-    function icard(w) {
-      return '<div class="svc-cover__card"><img src="' + HAO.imgSrc(w.f) + '" alt="" /></div>';
-    }
-    var ia = flow.filter(function (w, i) { return i % 2 === 0; }).map(icard).join("");
-    var ib = flow.filter(function (w, i) { return i % 2 === 1; }).map(icard).join("");
+    function icard(src) { return '<div class="svc-cover__card"><img src="' + src + '" alt="" /></div>'; }
+    var ia = heroSrc.filter(function (s, i) { return i % 2 === 0; }).map(icard).join("");
+    var ib = heroSrc.filter(function (s, i) { return i % 2 === 1; }).map(icard).join("");
     document.getElementById("svImgsA").innerHTML = ia + ia; // 루프용 복제
     document.getElementById("svImgsB").innerHTML = ib + ib;
 
     document.getElementById("svWorksT").textContent = cat.label + " 작업 사례";
     /* 작업 사례 4장: 슬롯 지정 우선, 없으면 포트폴리오 자동 */
-    var slots = HAO.getSlots ? HAO.getSlots() : {};
     var gridItems = [];
     for (var gi = 0; gi < 4; gi++) {
       var ov = slots["svc_" + key + "_" + gi];
