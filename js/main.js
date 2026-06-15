@@ -180,11 +180,16 @@
   var imgSrc = (window.HAO && HAO.imgSrc) ? HAO.imgSrc : function (f) { return "assets/work/" + f + ".jpeg"; };
   var marquee = ["work02","work03","work05","work06","work08","work09","work11","work12","work13","work14","work16","work17","work19","work21","work22","work23","work01","work04","work07","work10"];
 
-  /* ---- Inject portfolio mosaic (main page): first 7 works, lg + 4 + 2 wide ---- */
+  /* ---- 메인 대표작 (관리자 '메인 대표작' 탭에서 지정) ---- */
+  var featured = (window.HAO && HAO.getFeatured) ? HAO.getFeatured() : [];
+  featured = featured.filter(function (w) { return w && w.f; }); // 빈 슬롯 제외
+  if (!featured.length) featured = works.slice(0, 8);
+
+  /* ---- Inject portfolio mosaic (main page): 지정한 대표작 7장, lg + 4 + 2 wide ---- */
   var workGrid = document.getElementById("workGrid");
-  if (workGrid && workGrid.classList.contains("work__grid--mosaic") && works.length) {
+  if (workGrid && workGrid.classList.contains("work__grid--mosaic") && featured.length) {
     var sizes = ["lg", "", "", "", "", "wide", "wide"];
-    workGrid.innerHTML = works.slice(0, 7).map(function (w, idx) {
+    workGrid.innerHTML = featured.slice(0, 7).map(function (w, idx) {
       var size = sizes[idx] || "";
       return '<article class="wcard reveal' + (size ? " wcard--" + size : "") + '" style="--d:' + idx + '">' +
         '<div class="wcard__media"><img src="' + imgSrc(w.f) + '" alt="' + w.t + '" loading="lazy" /></div>' +
@@ -212,10 +217,11 @@
   }
   var trackTop = document.getElementById("trackTop");
   var trackBot = document.getElementById("trackBot");
-  if (trackTop && works.length) {
-    var mq1 = works.slice(0, 10);
-    var mq2 = works.slice(10, 20);
-    if (!mq2.length) mq2 = works.slice(0, 10);
+  if (trackTop && featured.length) {
+    var mqHalf = Math.ceil(featured.length / 2);
+    var mq1 = featured.slice(0, mqHalf);
+    var mq2 = featured.slice(mqHalf);
+    if (!mq2.length) mq2 = mq1;
     fillTrack(trackTop, mq1);
     fillTrack(trackBot, mq2);
   }

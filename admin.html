@@ -155,6 +155,7 @@
           <button data-tab="copy">카피 수정</button>
           <button data-tab="svc">서비스 페이지</button>
           <button data-tab="works">포트폴리오 <span class="cnt" id="cntWorks">0</span></button>
+          <button data-tab="featured">메인 대표작 <span class="cnt" id="cntFeat">0</span></button>
           <button data-tab="posts">칼럼 <span class="cnt" id="cntPosts">0</span></button>
           <button data-tab="revs">고객 후기 <span class="cnt" id="cntRevs">0</span></button>
           <button data-tab="media">이미지 · 로고</button>
@@ -252,6 +253,13 @@
               </div>
             </form>
           </div>
+        </section>
+
+        <!-- 메인 대표작 -->
+        <section id="tab-featured" hidden>
+          <div class="main__head"><h1>메인 대표작</h1><button class="btn btn--primary" id="featAddBtn">+ 슬롯 추가</button></div>
+          <p class="note" style="margin-bottom:14px">메인 페이지 <b>제작 사례 모자이크와 상단 흐르는 띠</b>에 들어갈 사진입니다. 슬롯마다 사진을 직접 올려서 바꾸세요. 위에서부터 순서대로 배치되며 앞 7장이 모자이크에 들어갑니다.</p>
+          <div id="featList"></div>
         </section>
 
         <!-- 칼럼 -->
@@ -414,7 +422,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=11"></script>
+  <script src="js/data.js?v=12"></script>
   <script>
   (function () {
     "use strict";
@@ -466,7 +474,7 @@
     });
 
     /* ---- 탭 ---- */
-    var TABS = ["dash", "hero", "copy", "svc", "works", "posts", "revs", "media", "inq", "seo", "set", "acc"];
+    var TABS = ["dash", "hero", "copy", "svc", "works", "featured", "posts", "revs", "media", "inq", "seo", "set", "acc"];
     document.querySelectorAll("#sideMenu button").forEach(function (b) {
       b.addEventListener("click", function () {
         document.querySelectorAll("#sideMenu button").forEach(function (x) { x.classList.remove("is-active"); });
@@ -482,7 +490,9 @@
     var revs = HAO.getReviews();
     var partners = HAO.getPartners();
     var govLogos = HAO.getGov();
+    var featured = HAO.getFeatured();
     function saveWorks() { if (store("hao_works", works)) renderAll(); }
+    function saveFeatured() { if (store("hao_featured", featured)) renderAll(); }
     function saveRevs() { if (store("hao_reviews", revs)) renderAll(); }
     function savePartners() { if (store("hao_partners", partners)) renderAll(); }
     function saveGov() { if (store("hao_gov", govLogos)) renderAll(); }
@@ -541,6 +551,18 @@
           '<div class="ops"><a class="btn" href="board.html#post-' + p.id + '" target="_blank" data-stop>보기 ↗</a>' +
           '<button class="btn btn--danger" data-del-post="' + p.id + '" data-stop>삭제</button></div></div>';
       }).join("") : '<p class="empty">글이 없습니다. ✚ 글쓰기를 눌러 첫 글을 작성해보세요.</p>';
+
+      /* 메인 대표작 */
+      $("cntFeat").textContent = featured.length;
+      $("featList").innerHTML = featured.length ? featured.map(function (w, i) {
+        return '<div class="row"><img src="' + HAO.imgSrc(w.f) + '" alt="" />' +
+          '<div class="t"><b>' + (i < 7 ? "★ 모자이크 " : "띠 ") + (i + 1) + "</b><small>" + esc(w.t || "(제목 없음)") + " · " + esc(w.c) + "</small></div>" +
+          '<div class="ops">' +
+          '<label class="btn" style="cursor:pointer">사진 변경<input type="file" accept="image/*" data-feat-file="' + i + '" hidden /></label>' +
+          '<button class="btn" data-feat-up="' + i + '" title="위로">↑</button>' +
+          '<button class="btn" data-feat-down="' + i + '" title="아래로">↓</button>' +
+          '<button class="btn btn--danger" data-del-feat="' + i + '">삭제</button></div></div>';
+      }).join("") : '<p class="empty">슬롯이 없습니다. + 슬롯 추가를 눌러 사진을 올리세요.</p>';
 
       /* 이미지 · 로고 */
       $("logoPrev").src = HAO.getLogo();
@@ -632,6 +654,17 @@
       var item = { t: $("wTitle").value.trim() || "제목 없음", c: $("wCat").value, f: img };
       if (idx >= 0) works[idx] = item; else works.unshift(item);
       $("workForm").hidden = true; saveWorks();
+    });
+
+    /* ---- 메인 대표작 (슬롯 직접 편집) ---- */
+    $("featAddBtn").addEventListener("click", function () {
+      featured.push({ f: "", t: "", c: "" }); saveFeatured();
+    });
+    document.addEventListener("change", function (e) {
+      var fl = e.target.closest("[data-feat-file]");
+      if (!fl || !fl.files || !fl.files[0]) return;
+      var i = parseInt(fl.getAttribute("data-feat-file"), 10);
+      fileToDataURL(fl.files[0], function (data) { featured[i].f = data; saveFeatured(); });
     });
 
     /* ---- 칼럼 CRUD ---- */
@@ -839,7 +872,7 @@
     /* ---- 목록 버튼 위임 ---- */
     document.addEventListener("click", function (e) {
       var stop = e.target.closest("[data-stop]");
-      var b = stop || e.target.closest("[data-edit-work],[data-del-work],[data-edit-post],[data-del-post],[data-edit-rev],[data-del-rev],[data-del-ptn],[data-del-gov],[data-del-inq]");
+      var b = stop || e.target.closest("[data-edit-work],[data-del-work],[data-feat-up],[data-feat-down],[data-del-feat],[data-edit-post],[data-del-post],[data-edit-rev],[data-del-rev],[data-del-ptn],[data-del-gov],[data-del-inq]");
       if (!b) return;
       if (stop && !stop.hasAttribute("data-del-post") && !stop.hasAttribute("data-del-inq")) return; // 보기 링크 등은 기본 동작만
       if (b.hasAttribute("data-edit-work")) openWorkForm(parseInt(b.getAttribute("data-edit-work"), 10));
@@ -848,6 +881,9 @@
       if (b.hasAttribute("data-del-post")) { if (confirm("이 글을 삭제할까요?")) { posts = posts.filter(function (p) { return p.id !== parseInt(b.getAttribute("data-del-post"), 10); }); savePosts(); } }
       if (b.hasAttribute("data-edit-rev")) openRevForm(parseInt(b.getAttribute("data-edit-rev"), 10));
       if (b.hasAttribute("data-del-rev")) { if (confirm("이 후기를 삭제할까요?")) { revs.splice(parseInt(b.getAttribute("data-del-rev"), 10), 1); saveRevs(); } }
+      if (b.hasAttribute("data-del-feat")) { featured.splice(parseInt(b.getAttribute("data-del-feat"), 10), 1); saveFeatured(); }
+      if (b.hasAttribute("data-feat-up")) { var fi = parseInt(b.getAttribute("data-feat-up"), 10); if (fi > 0) { var t = featured[fi]; featured[fi] = featured[fi-1]; featured[fi-1] = t; saveFeatured(); } }
+      if (b.hasAttribute("data-feat-down")) { var fj = parseInt(b.getAttribute("data-feat-down"), 10); if (fj < featured.length-1) { var u = featured[fj]; featured[fj] = featured[fj+1]; featured[fj+1] = u; saveFeatured(); } }
       if (b.hasAttribute("data-del-ptn")) { partners.splice(parseInt(b.getAttribute("data-del-ptn"), 10), 1); savePartners(); }
       if (b.hasAttribute("data-del-gov")) { govLogos.splice(parseInt(b.getAttribute("data-del-gov"), 10), 1); saveGov(); }
       if (b.hasAttribute("data-del-inq")) { var inq = HAO.getInquiries(); inq.splice(parseInt(b.getAttribute("data-del-inq"), 10), 1); localStorage.setItem("hao_inquiries", JSON.stringify(inq)); renderAll(); }
@@ -915,8 +951,8 @@
     /* ---- 초기화 ---- */
     $("resetBtn").addEventListener("click", function () {
       if (!confirm("히어로 · 포트폴리오 · 칼럼 · 설정 수정 내용을 모두 버리고 기본값으로 되돌릴까요?")) return;
-      ["hao_works", "hao_posts", "hao_hero", "hao_settings", "hao_copy", "hao_service", "hao_reviews", "hao_seo", "hao_logo", "hao_partners", "hao_gov"].forEach(function (k) { localStorage.removeItem(k); });
-      works = HAO.getWorks(); posts = HAO.getPosts(); hero = HAO.getHero(); revs = HAO.getReviews(); partners = HAO.getPartners(); govLogos = HAO.getGov(); renderAll();
+      ["hao_works", "hao_posts", "hao_hero", "hao_settings", "hao_copy", "hao_service", "hao_reviews", "hao_seo", "hao_logo", "hao_partners", "hao_gov", "hao_featured"].forEach(function (k) { localStorage.removeItem(k); });
+      works = HAO.getWorks(); posts = HAO.getPosts(); hero = HAO.getHero(); revs = HAO.getReviews(); partners = HAO.getPartners(); govLogos = HAO.getGov(); featured = HAO.getFeatured(); renderAll();
     });
 
     /* ---- 세션 복원 (모든 초기화 후) ---- */

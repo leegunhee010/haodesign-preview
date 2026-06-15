@@ -116,6 +116,9 @@
     }
   ];
 
+  /* 메인 대표작 (관리자가 직접 지정 — 메인 모자이크 + 흐르는 띠) */
+  var DEFAULT_FEATURED = DEFAULT_WORKS.slice(0, 8);
+
   /* 로고 (헤더·푸터 공통) */
   var DEFAULT_LOGO = "assets/img/logo.png";
 
@@ -509,6 +512,7 @@
     getPosts: function () { return load("hao_posts", DEFAULT_POSTS); },
     getHero: function () { return load("hao_hero", DEFAULT_HERO); },
     getReviews: function () { return load("hao_reviews", DEFAULT_REVIEWS); },
+    getFeatured: function () { return load("hao_featured", DEFAULT_FEATURED); },
     getLogo: function () { var v = localStorage.getItem("hao_logo"); return v && v.length ? v : DEFAULT_LOGO; },
     getPartners: function () { return load("hao_partners", DEFAULT_PARTNERS); },
     getGov: function () { return load("hao_gov", DEFAULT_GOV); },
