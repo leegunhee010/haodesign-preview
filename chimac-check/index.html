@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>치맥페 바우처</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800;900&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
@@ -83,8 +82,6 @@
   .card h2 { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   .card h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
-  #reader { border-radius: 14px; overflow: hidden; background: var(--bg); min-height: 60px; }
-
   /* ===== 버튼 ===== */
   .btn {
     width: 100%; border: none; cursor: pointer; font-family: inherit;
@@ -95,7 +92,6 @@
   .btn:hover { filter: brightness(0.98); }
   .btn.ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
   .btn + .btn { margin-top: 10px; }
-  #scanBtn { margin-top: 12px; padding: 17px; font-size: 17px; }
 
   .manual { display: flex; gap: 8px; margin-top: 12px; }
   .manual input {
@@ -219,7 +215,7 @@
 
   <!-- 탭 -->
   <nav class="tabs hide" id="tabs">
-    <button data-view="scan" class="on" data-i18n="tabScan">스캔</button>
+    <button data-view="scan" class="on" data-i18n="tabScan">확인</button>
     <button data-view="usage" data-i18n="tabUsage">현황</button>
     <button data-view="manage" class="hide" id="tabManage" data-i18n="tabManage">관리</button>
   </nav>
@@ -228,15 +224,13 @@
   <section id="scanView">
     <div class="result" id="result"></div>
     <div class="card">
-      <h2><span class="dot"></span><span data-i18n="scanTitle">QR 스캔으로 확인</span></h2>
-      <div id="reader"></div>
-      <button class="btn" id="scanBtn" data-i18n="scanStart">카메라 시작</button>
+      <h2><span class="dot"></span><span data-i18n="scanTitle">바우처 코드 확인</span></h2>
       <div class="manual">
-        <input id="manualCode" placeholder="코드 직접 입력" data-i18n-ph="codePlaceholder" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <input id="manualCode" placeholder="코드 입력" data-i18n-ph="codePlaceholder" autocomplete="off" autocapitalize="characters" spellcheck="false">
         <button id="manualBtn" data-i18n="check">확인</button>
       </div>
     </div>
-    <p class="note" data-i18n="scanNote">QR을 비추면 자동으로 확인되고, 중복 사용은 자동 차단됩니다.</p>
+    <p class="note" data-i18n="scanNote">바우처 코드를 입력해 확인하세요. 중복 사용은 자동 차단됩니다.</p>
   </section>
 
   <!-- ===== 현황 ===== -->
@@ -335,11 +329,11 @@ let lang = 'ko';
 const I18N = {
   ko: {
     loginTitle:'치맥페 바우처 로그인', pwPlaceholder:'비밀번호', enter:'입장', cancel:'취소',
-    tabScan:'스캔', tabUsage:'현황', tabManage:'관리',
+    tabScan:'확인', tabUsage:'현황', tabManage:'관리',
     issued:'발급', used:'사용', left:'잔여',
-    scanTitle:'QR 스캔으로 확인', scanStart:'카메라 시작', scanStop:'카메라 끄기',
-    codePlaceholder:'코드 직접 입력', check:'확인',
-    scanNote:'QR을 비추면 자동으로 확인되고, 중복 사용은 자동 차단됩니다.',
+    scanTitle:'바우처 코드 확인',
+    codePlaceholder:'코드 입력', check:'확인',
+    scanNote:'바우처 코드를 입력해 확인하세요. 중복 사용은 자동 차단됩니다.',
     issueTitle:'바우처 등록·발급', genLabel:'장 자동 생성 (QR 발급)',
     genBtn:'QR 생성하기', customPlaceholder:'직접 코드 추가 (선택)', add:'추가',
     usageTitle:'사용 현황', fAll:'전체', fUsed:'사용됨', fUnused:'미사용',
@@ -364,11 +358,11 @@ const I18N = {
   },
   vi: {
     loginTitle:'Đăng nhập Voucher Chimaek', pwPlaceholder:'Mật khẩu', enter:'Vào', cancel:'Hủy',
-    tabScan:'Quét', tabUsage:'Tình trạng', tabManage:'Quản lý',
+    tabScan:'Kiểm tra', tabUsage:'Tình trạng', tabManage:'Quản lý',
     issued:'Đã phát', used:'Đã dùng', left:'Còn lại',
-    scanTitle:'Quét mã QR để kiểm tra', scanStart:'Bật camera', scanStop:'Tắt camera',
-    codePlaceholder:'Nhập mã trực tiếp', check:'Kiểm tra',
-    scanNote:'Hướng camera vào mã QR để kiểm tra tự động; dùng trùng sẽ bị chặn.',
+    scanTitle:'Kiểm tra mã voucher',
+    codePlaceholder:'Nhập mã', check:'Kiểm tra',
+    scanNote:'Nhập mã voucher để kiểm tra. Dùng trùng sẽ bị chặn.',
     issueTitle:'Đăng ký · Phát voucher', genLabel:'voucher tạo tự động (phát QR)',
     genBtn:'Tạo mã QR', customPlaceholder:'Thêm mã thủ công (tùy chọn)', add:'Thêm',
     usageTitle:'Tình trạng sử dụng', fAll:'Tất cả', fUsed:'Đã dùng', fUnused:'Chưa dùng',
@@ -407,7 +401,6 @@ let accounts = { ...DEFAULT_ACCOUNTS };
 let storesTableOk = false;
 let editingPw = null;
 let vouchers = {};
-let scanner = null, scanning = false, lastScan = 0, cameraEnabled = false;
 let isAdmin = false, isMaster = false;
 let currentStore = null;
 let view = 'scan';
@@ -639,26 +632,6 @@ function beep(ok) {
   } catch(e){}
 }
 
-// ===== 카메라 =====
-function updateScanBtn() {
-  scanBtn.textContent = scanning ? t('scanStop') : t('scanStart');
-  scanBtn.classList.toggle('ghost', scanning);
-}
-async function startScan() {
-  if (scanning) return;
-  if (!scanner) scanner = new Html5Qrcode('reader');
-  try {
-    await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: 220 },
-      (txt) => { const now = Date.now(); if (now - lastScan < 1500) return; lastScan = now; redeem(txt); }, () => {});
-    scanning = true; cameraEnabled = true; updateScanBtn();
-  } catch(e) { alert(t('alCam')); }
-}
-async function stopScan() {
-  if (!scanning) return;
-  try { await scanner.stop(); } catch(e){}
-  scanning = false; updateScanBtn();
-}
-
 // ===== 화면 전환 =====
 function showView(v) {
   view = v;
@@ -666,8 +639,7 @@ function showView(v) {
   document.getElementById('scanView').classList.toggle('hide', v !== 'scan');
   document.getElementById('usageView').classList.toggle('hide', v !== 'usage');
   document.getElementById('manageView').classList.toggle('hide', v !== 'manage');
-  if (v === 'scan') { if (cameraEnabled && !scanning) startScan(); }
-  else if (scanning) { stopScan(); }
+  if (v === 'scan') document.getElementById('manualCode').focus();
   if (v === 'usage' || v === 'manage') render();
 }
 
@@ -692,8 +664,7 @@ function setMode(loggedIn) {
 // ===== 이벤트 =====
 document.getElementById('topBtn').onclick = () => {
   if (isAdmin) {
-    stopScan();
-    currentStore = null; isMaster = false; cameraEnabled = false; setMode(false);
+    currentStore = null; isMaster = false; setMode(false);
     document.getElementById('mainWrap').classList.add('hide');
     document.getElementById('loginModal').classList.add('open');
     document.getElementById('pwInput').focus();
@@ -721,7 +692,6 @@ document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key=
 
 document.getElementById('manualBtn').onclick = () => { redeem(manualCode.value); manualCode.value = ''; };
 document.getElementById('manualCode').addEventListener('keydown', e => { if (e.key==='Enter') manualBtn.click(); });
-document.getElementById('scanBtn').onclick = () => { scanning ? stopScan() : startScan(); };
 
 document.querySelectorAll('#tabs button').forEach(btn => { btn.onclick = () => showView(btn.dataset.view); });
 
@@ -787,7 +757,6 @@ function applyLang() {
   });
   document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
   setMode(isAdmin);
-  updateScanBtn();
 }
 document.querySelectorAll('[data-lang]').forEach(btn => { btn.onclick = () => { lang = btn.dataset.lang; applyLang(); }; });
 
