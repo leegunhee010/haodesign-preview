@@ -23,8 +23,43 @@
     });
   }
 
-  /* ---- 사이트 카피 적용 (관리자 '카피 수정' 탭) ---- */
   var pageName = (location.pathname.split("/").pop() || "index.html").replace(".html", "") || "index";
+
+  /* ---- SEO 메타 적용 (관리자 'SEO 관리' 탭) ---- */
+  if (window.HAO && HAO.getSeo) {
+    var seo = HAO.getSeo();
+    var sp = seo.pages[pageName];
+    if (sp) {
+      var abs = function (u) { return /^https?:/.test(u) ? u : (seo.siteUrl.replace(/\/$/, "") + "/" + String(u).replace(/^\//, "")); };
+      var pageUrl = seo.siteUrl.replace(/\/$/, "") + "/" + (pageName === "index" ? "" : pageName + ".html");
+      var ogImg = abs(seo.ogImage);
+      function meta(sel, attr, key, val) {
+        var el = document.head.querySelector(sel);
+        if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+        el.setAttribute("content", val);
+      }
+      if (sp.title) document.title = sp.title;
+      if (sp.desc) meta('meta[name="description"]', "name", "description", sp.desc);
+      if (sp.keywords) meta('meta[name="keywords"]', "name", "keywords", sp.keywords);
+      // canonical
+      var can = document.head.querySelector('link[rel="canonical"]');
+      if (!can) { can = document.createElement("link"); can.setAttribute("rel", "canonical"); document.head.appendChild(can); }
+      can.setAttribute("href", pageUrl);
+      // Open Graph + Twitter
+      meta('meta[property="og:title"]', "property", "og:title", sp.title || document.title);
+      meta('meta[property="og:description"]', "property", "og:description", sp.desc || "");
+      meta('meta[property="og:type"]', "property", "og:type", "website");
+      meta('meta[property="og:url"]', "property", "og:url", pageUrl);
+      meta('meta[property="og:image"]', "property", "og:image", ogImg);
+      meta('meta[property="og:site_name"]', "property", "og:site_name", "HAO DESIGN 하오디자인");
+      meta('meta[name="twitter:card"]', "name", "twitter:card", "summary_large_image");
+      meta('meta[name="twitter:title"]', "name", "twitter:title", sp.title || document.title);
+      meta('meta[name="twitter:description"]', "name", "twitter:description", sp.desc || "");
+      meta('meta[name="twitter:image"]', "name", "twitter:image", ogImg);
+    }
+  }
+
+  /* ---- 사이트 카피 적용 (관리자 '카피 수정' 탭) ---- */
   if (window.HAO && HAO.getCopy) {
     HAO.getCopy().forEach(function (c) {
       if (c.page !== "all" && c.page !== pageName) return;

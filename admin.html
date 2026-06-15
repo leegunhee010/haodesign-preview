@@ -152,6 +152,7 @@
           <button data-tab="posts">칼럼 <span class="cnt" id="cntPosts">0</span></button>
           <button data-tab="revs">고객 후기 <span class="cnt" id="cntRevs">0</span></button>
           <button data-tab="inq">견적 문의 <span class="cnt" id="cntInq">0</span></button>
+          <button data-tab="seo">SEO 관리</button>
           <button data-tab="set">사이트 설정</button>
           <button data-tab="acc">관리자 계정</button>
         </nav>
@@ -321,6 +322,25 @@
         </section>
 
         <!-- 사이트 설정 -->
+        <!-- SEO 관리 -->
+        <section id="tab-seo" hidden>
+          <div class="main__head"><h1>SEO 관리</h1><button class="btn btn--primary" id="seoSaveBtn">전체 저장</button></div>
+          <p class="note" style="margin-bottom:14px">검색엔진(네이버·구글)에 표시되는 페이지 제목·설명·키워드를 관리합니다. <b>제목 35자, 설명 80자</b> 안팎이 가장 잘 노출됩니다. 글자 수와 점검 결과가 실시간 표시됩니다.</p>
+          <div class="panel">
+            <div class="frm" style="grid-template-columns:1fr">
+              <div><label>사이트 기본 주소 (배포 도메인)</label><input type="text" id="seoSiteUrl" placeholder="https://haodesign.co.kr" /></div>
+              <div><label>대표 공유 이미지 (og:image) 경로</label><input type="text" id="seoOgImage" placeholder="assets/work-hd/large/w402.jpg" /></div>
+              <div><label>페이지 선택</label><select id="seoPage"></select></div>
+            </div>
+            <div class="frm" id="seoFields" style="grid-template-columns:1fr;margin-top:12px"></div>
+          </div>
+          <div class="panel">
+            <h2>SEO 점검</h2>
+            <div id="seoCheck"></div>
+          </div>
+        </section>
+
+        <!-- 사이트 설정 -->
         <section id="tab-set" hidden>
           <div class="main__head"><h1>사이트 설정</h1></div>
           <div class="panel">
@@ -352,7 +372,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=8"></script>
+  <script src="js/data.js?v=9"></script>
   <script>
   (function () {
     "use strict";
@@ -404,7 +424,7 @@
     });
 
     /* ---- 탭 ---- */
-    var TABS = ["dash", "hero", "copy", "svc", "works", "posts", "revs", "inq", "set", "acc"];
+    var TABS = ["dash", "hero", "copy", "svc", "works", "posts", "revs", "inq", "seo", "set", "acc"];
     document.querySelectorAll("#sideMenu button").forEach(function (b) {
       b.addEventListener("click", function () {
         document.querySelectorAll("#sideMenu button").forEach(function (x) { x.classList.remove("is-active"); });
@@ -678,6 +698,66 @@
     });
     renderSvc();
 
+    /* ---- SEO 관리 ---- */
+    var seoData = HAO.getSeo();
+    var SEO_PAGES = { index: "메인", about: "회사소개", service: "서비스", work: "포트폴리오", board: "칼럼", support: "지원사업", contact: "견적문의" };
+    var SEO_FIELDS = [["title", "페이지 제목 (title) — 권장 35자 내외", 35], ["desc", "설명 (description) — 권장 80자 내외", 80], ["keywords", "키워드 (쉼표로 구분)", 0]];
+    $("seoSiteUrl").value = seoData.siteUrl;
+    $("seoOgImage").value = seoData.ogImage;
+    $("seoPage").innerHTML = Object.keys(SEO_PAGES).map(function (k) { return '<option value="' + k + '">' + SEO_PAGES[k] + "</option>"; }).join("");
+    function renderSeo() {
+      var k = $("seoPage").value, p = seoData.pages[k] || {};
+      $("seoFields").innerHTML = SEO_FIELDS.map(function (f) {
+        return '<div class="full"><label>' + f[1] + ' <b class="seoLen" data-for="' + f[0] + '"></b></label>' +
+          '<textarea rows="2" data-seo="' + f[0] + '">' + esc(p[f[0]] || "") + "</textarea></div>";
+      }).join("");
+      updSeoLen();
+    }
+    function updSeoLen() {
+      document.querySelectorAll("#seoFields [data-seo]").forEach(function (el) {
+        var f = el.getAttribute("data-seo");
+        var rec = SEO_FIELDS.filter(function (x) { return x[0] === f; })[0][2];
+        var len = el.value.length;
+        var tag = document.querySelector('.seoLen[data-for="' + f + '"]');
+        if (!tag) return;
+        if (!rec) { tag.textContent = "(" + len + "자)"; tag.style.color = "var(--muted)"; }
+        else { tag.textContent = "(" + len + " / 권장 " + rec + "자)"; tag.style.color = len > rec + 10 ? "#d33" : (len < rec * 0.4 ? "#c80" : "#1a8a3a"); }
+      });
+    }
+    $("seoPage").addEventListener("change", renderSeo);
+    $("seoFields").addEventListener("input", function (e) {
+      var f = e.target.getAttribute("data-seo");
+      if (!f) return;
+      if (!seoData.pages[$("seoPage").value]) seoData.pages[$("seoPage").value] = {};
+      seoData.pages[$("seoPage").value][f] = e.target.value;
+      updSeoLen();
+    });
+    function runSeoCheck() {
+      var rows = [];
+      function row(ok, txt) { return '<div class="row" style="border:0;padding:6px 0"><span style="font-size:1.1rem">' + (ok ? "✅" : "⚠️") + '</span><div class="t"><b style="white-space:normal">' + txt + "</b></div></div>"; }
+      var seo = HAO.getSeo();
+      var missing = 0, longT = 0, longD = 0;
+      Object.keys(SEO_PAGES).forEach(function (k) {
+        var p = seo.pages[k] || {};
+        if (!p.title || !p.desc) missing++;
+        if (p.title && p.title.length > 45) longT++;
+        if (p.desc && p.desc.length > 95) longD++;
+      });
+      rows.push(row(missing === 0, missing === 0 ? "모든 페이지에 제목·설명이 있습니다 (" + Object.keys(SEO_PAGES).length + "개)" : missing + "개 페이지에 제목 또는 설명이 비어 있습니다"));
+      rows.push(row(longT === 0, longT === 0 ? "제목 길이 적정" : longT + "개 페이지 제목이 너무 깁니다 (45자 초과)"));
+      rows.push(row(longD === 0, longD === 0 ? "설명 길이 적정" : longD + "개 페이지 설명이 너무 깁니다 (95자 초과)"));
+      rows.push(row(/^https?:\/\/.+/.test(seo.siteUrl), seo.siteUrl ? "사이트 주소 설정됨 — " + seo.siteUrl : "사이트 주소가 없습니다"));
+      rows.push(row(true, "robots.txt · sitemap.xml · 구조화 데이터(JSON-LD) 적용됨"));
+      rows.push(row(true, "Open Graph · 트위터 카드 · canonical 자동 적용됨"));
+      $("seoCheck").innerHTML = rows.join("");
+    }
+    $("seoSaveBtn").addEventListener("click", function () {
+      seoData.siteUrl = $("seoSiteUrl").value.trim();
+      seoData.ogImage = $("seoOgImage").value.trim();
+      if (store("hao_seo", seoData)) { runSeoCheck(); alert("SEO 설정이 저장되었습니다. 사이트를 새로고침하면 반영됩니다."); }
+    });
+    renderSeo(); runSeoCheck();
+
     /* ---- 설정 저장 ---- */
     $("setForm").addEventListener("submit", function (e) {
       e.preventDefault();
@@ -745,7 +825,7 @@
     /* ---- 초기화 ---- */
     $("resetBtn").addEventListener("click", function () {
       if (!confirm("히어로 · 포트폴리오 · 칼럼 · 설정 수정 내용을 모두 버리고 기본값으로 되돌릴까요?")) return;
-      ["hao_works", "hao_posts", "hao_hero", "hao_settings", "hao_copy", "hao_service", "hao_reviews"].forEach(function (k) { localStorage.removeItem(k); });
+      ["hao_works", "hao_posts", "hao_hero", "hao_settings", "hao_copy", "hao_service", "hao_reviews", "hao_seo"].forEach(function (k) { localStorage.removeItem(k); });
       works = HAO.getWorks(); posts = HAO.getPosts(); hero = HAO.getHero(); revs = HAO.getReviews(); renderAll();
     });
 

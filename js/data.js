@@ -129,6 +129,42 @@
   /* 사이트 설정 */
   var DEFAULT_SETTINGS = { tel: "1666-2027", email: "sales@haodesign.co.kr" };
 
+  /* SEO (관리자 'SEO 관리' 탭) — siteUrl + 페이지별 title/desc/keywords */
+  var DEFAULT_SEO = {
+    siteUrl: "https://haodesign.co.kr",
+    ogImage: "assets/work-hd/large/w402.jpg",
+    pages: {
+      index: {
+        title: "하오디자인 | 카탈로그·브로슈어·포스터·리플렛 제작 디자인",
+        desc: "카탈로그·브로슈어·포스터·리플렛 디자인부터 인쇄·사진촬영까지. 10년 경력의 디자이너가 함께하는 원스톱 디자인 스튜디오, 하오디자인(HAO DESIGN).",
+        keywords: "카탈로그제작, 브로슈어제작, 회사소개서제작, 리플렛제작, 포스터제작, 인쇄디자인, 편집디자인, 하오디자인" },
+      about: {
+        title: "회사소개 | 하오디자인 HAO DESIGN",
+        desc: "2013년부터 카탈로그·브로슈어·포스터·리플렛 인쇄 디자인 한 길. 기획·디자인·촬영·인쇄·납품까지 원스톱으로 제공하는 디자인 스튜디오 하오디자인.",
+        keywords: "하오디자인, 디자인스튜디오, 인쇄디자인회사, 편집디자인, 광진구 디자인" },
+      service: {
+        title: "서비스 | 카탈로그·브로슈어·포스터·CI·패키지·촬영 | 하오디자인",
+        desc: "카탈로그·브로슈어, 팜플렛·리플렛, 포스터·전단지, CI·로고, 패키지·라벨, 제품촬영, 다국어디자인 — 분야별 제작 서비스를 안내합니다.",
+        keywords: "카탈로그디자인, 브로슈어디자인, 리플렛제작, 포스터디자인, 로고제작, 패키지디자인, 제품촬영, 다국어카탈로그" },
+      work: {
+        title: "포트폴리오 | 하오디자인 제작 사례",
+        desc: "하오디자인이 직접 기획·제작한 카탈로그·브로슈어·리플렛·포스터·CI·패키지·촬영·다국어 디자인 실제 작업 사례 모음.",
+        keywords: "카탈로그 포트폴리오, 브로슈어 사례, 회사소개서 디자인, 인쇄물 제작 사례, 하오디자인 포트폴리오" },
+      board: {
+        title: "칼럼 | 인쇄와 디자인 이야기 | 하오디자인",
+        desc: "카탈로그·브로슈어·인쇄 디자인을 준비할 때 알아두면 좋은 실무 이야기. 하오디자인의 디자인 칼럼.",
+        keywords: "인쇄 가이드, 카탈로그 제작 팁, 회사소개서 기획, 디자인 칼럼, 인쇄 데이터" },
+      support: {
+        title: "정부지원사업 | 수출바우처·제조혁신바우처 디자인 제작 | 하오디자인",
+        desc: "수출바우처·제조혁신바우처·소상공인 지원사업 공식 수행기관 하오디자인. 정부지원사업으로 카탈로그·브로슈어·다국어 홍보물 제작 비용 부담을 줄이세요.",
+        keywords: "수출바우처, 제조혁신바우처, 정부지원사업 디자인, 바우처 카탈로그, 소상공인 지원사업, 수출바우처 수행기관" },
+      contact: {
+        title: "견적문의 | 하오디자인 HAO DESIGN",
+        desc: "카탈로그·브로슈어·포스터·리플렛 제작 견적 문의. 간단한 내용만 남겨주시면 담당자가 빠르게 연락드립니다. 1666-2027",
+        keywords: "디자인 견적, 카탈로그 견적, 브로슈어 견적, 인쇄 견적 문의, 하오디자인 문의" }
+    }
+  };
+
   /* 사이트 카피 (관리자 '카피 수정' 탭에서 편집)
      page: 적용 페이지 / sel: 대상 선택자 / tag: **강조** 변환 태그 / attr: 속성으로 적용(숫자 카운터 등) */
   var DEFAULT_COPY = [
@@ -459,6 +495,18 @@
       });
     },
     getSettings: function () { return loadObj("hao_settings", DEFAULT_SETTINGS); },
+    /* SEO: 기본값에 저장된 수정값(hao_seo)을 깊은 병합 */
+    getSeo: function () {
+      var ov = loadObj("hao_seo", {});
+      var out = JSON.parse(JSON.stringify(DEFAULT_SEO));
+      if (ov.siteUrl) out.siteUrl = ov.siteUrl;
+      if (ov.ogImage) out.ogImage = ov.ogImage;
+      if (ov.pages) Object.keys(ov.pages).forEach(function (p) {
+        if (!out.pages[p]) out.pages[p] = {};
+        Object.keys(ov.pages[p]).forEach(function (f) { out.pages[p][f] = ov.pages[p][f]; });
+      });
+      return out;
+    },
     /* 서비스 페이지: 기본값에 저장된 수정값(hao_service)을 카테고리·필드 단위로 덧입혀 반환 */
     getService: function () {
       var ov = loadObj("hao_service", {});
