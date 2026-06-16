@@ -186,9 +186,18 @@
   mosaicItems = mosaicItems.filter(function (w) { return w && w.f; });
   if (!mosaicItems.length) mosaicItems = works.slice(0, 8);
 
-  /* ---- 상단 흐르는 띠(롤링바) = 관리자 '흐르는 띠' 탭에서 지정, 없으면 메인 노출 작품으로 폴백 ---- */
+  /* ---- 상단 흐르는 띠(롤링바) = 관리자 '흐르는 띠' 탭에서 지정 ----
+     롤링이 풍성하도록 최소 15장 확보: 지정분이 모자라면 포트폴리오로 자동 채움 */
   var rolling = (window.HAO && HAO.getFeatured) ? HAO.getFeatured() : [];
   rolling = rolling.filter(function (w) { return w && w.f; });
+  var ROLL_MIN = 15;
+  if (rolling.length < ROLL_MIN) {
+    var seenRoll = {};
+    rolling.forEach(function (w) { seenRoll[w.f] = 1; });
+    mosaicItems.forEach(function (w) {
+      if (rolling.length < ROLL_MIN && !seenRoll[w.f]) { rolling.push(w); seenRoll[w.f] = 1; }
+    });
+  }
   if (!rolling.length) rolling = mosaicItems;
 
   /* ---- Inject portfolio mosaic (main page): 지정한 대표작 7장, lg + 4 + 2 wide ---- */
