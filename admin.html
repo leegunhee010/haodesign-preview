@@ -259,6 +259,11 @@
                   <option>CI·로고디자인</option><option>패키지·라벨</option><option>촬영서비스</option><option>다국어디자인</option>
                 </select>
               </div>
+              <div class="full"><label>노출 위치</label>
+                <label style="display:inline-flex;align-items:center;gap:7px;margin-right:20px;font-weight:600;cursor:pointer"><input type="checkbox" id="wMain" style="width:auto" /> 메인페이지 제작사례에 노출</label>
+                <label style="display:inline-flex;align-items:center;gap:7px;font-weight:600;cursor:pointer"><input type="checkbox" id="wSvc" style="width:auto" /> 서비스페이지 제작사례에 노출</label>
+                <p class="note" style="margin-top:6px">체크한 작품이 먼저 노출되고, 부족하면 나머지 포트폴리오로 자동 채워집니다.</p>
+              </div>
               <div><label>이미지 — 내 컴퓨터에서 업로드</label><input type="file" id="wFile" accept="image/*" /></div>
               <div><label>또는 이미지 URL</label><input type="text" id="wImgUrl" placeholder="https://…" /></div>
               <input type="hidden" id="wImgData" />
@@ -465,7 +470,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=16"></script>
+  <script src="js/data.js?v=17"></script>
   <script>
   HAO.ready.then(function () {
     "use strict";
@@ -614,8 +619,10 @@
 
       /* 포트폴리오 */
       $("workList").innerHTML = works.length ? works.map(function (w, i) {
+        var tags = (w.m ? '<span style="display:inline-block;background:var(--ink);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;margin-left:6px">메인</span>' : "") +
+                   (w.s ? '<span style="display:inline-block;background:var(--accent,#e83817);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;margin-left:6px">서비스</span>' : "");
         return '<div class="row"><img src="' + HAO.imgSrc(w.f) + '" alt="" />' +
-          '<div class="t"><b>' + esc(w.t) + "</b><small>" + esc(w.c) + "</small></div>" +
+          '<div class="t"><b>' + esc(w.t) + tags + "</b><small>" + esc(w.c) + "</small></div>" +
           '<div class="ops"><button class="btn" data-edit-work="' + i + '">수정</button>' +
           '<button class="btn btn--danger" data-del-work="' + i + '">삭제</button></div></div>';
       }).join("") : '<p class="empty">작품이 없습니다.</p>';
@@ -737,10 +744,11 @@
         $("wTitle").value = w.t; $("wCat").value = w.c;
         $("wImgUrl").value = "";
         $("wImgKeep").value = w.f || "";
+        $("wMain").checked = !!w.m; $("wSvc").checked = !!w.s;
         if (/^data:/.test(w.f)) { $("wImgData").value = w.f; setPrev($("wPrev"), w.f); }
         else if (/^https?:/.test(w.f)) { $("wImgUrl").value = w.f; }
         else if (w.f) { setPrev($("wPrev"), HAO.imgSrc(w.f)); }
-      } else { $("wTitle").value = ""; $("wImgUrl").value = ""; $("wImgKeep").value = ""; }
+      } else { $("wTitle").value = ""; $("wImgUrl").value = ""; $("wImgKeep").value = ""; $("wMain").checked = false; $("wSvc").checked = false; }
       $("wTitle").focus();
     }
     $("wFile").addEventListener("change", function () {
@@ -754,7 +762,7 @@
       var idx = parseInt($("wIdx").value, 10);
       /* 우선순위: 업로드 > URL > 기존 값 유지 */
       var img = $("wImgData").value || $("wImgUrl").value.trim() || $("wImgKeep").value;
-      var item = { t: $("wTitle").value.trim() || "제목 없음", c: $("wCat").value, f: img };
+      var item = { t: $("wTitle").value.trim() || "제목 없음", c: $("wCat").value, f: img, m: $("wMain").checked, s: $("wSvc").checked };
       if (idx >= 0) works[idx] = item; else works.unshift(item);
       $("workForm").hidden = true; saveWorks();
     });

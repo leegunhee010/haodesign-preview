@@ -565,6 +565,24 @@
     getHero: function () { return load("hao_hero", DEFAULT_HERO); },
     getReviews: function () { return load("hao_reviews", DEFAULT_REVIEWS); },
     getFeatured: function () { return load("hao_featured", DEFAULT_FEATURED); },
+    /* 메인 '제작 사례' = 포트폴리오에서 '메인 노출(m)' 체크한 작품 우선,
+       모자라면 나머지 포트폴리오로 자동 채움 → 항상 n개 채워 빈칸 방지 */
+    getMainWorks: function (n) {
+      var works = load("hao_works", DEFAULT_WORKS).filter(function (w) { return w && w.f; });
+      var picked = works.filter(function (w) { return w.m; });
+      var rest = works.filter(function (w) { return !w.m; });
+      var list = picked.concat(rest);
+      return n ? list.slice(0, n) : list;
+    },
+    /* 서비스 카테고리별 '제작 사례' = 그 카테고리 + '서비스 노출(s)' 체크 우선,
+       모자라면 같은 카테고리 나머지로 자동 채움 */
+    getServiceWorks: function (catLabel, n) {
+      var works = load("hao_works", DEFAULT_WORKS).filter(function (w) { return w && w.f && w.c === catLabel; });
+      var picked = works.filter(function (w) { return w.s; });
+      var rest = works.filter(function (w) { return !w.s; });
+      var list = picked.concat(rest);
+      return n ? list.slice(0, n) : list;
+    },
     /* 페이지별 이미지 슬롯 오버라이드 (id → 이미지). 비어있으면 포트폴리오 자동 */
     getSlots: function () { return loadObj("hao_imgslots", {}); },
     getLogo: function () { var v = localStorage.getItem("hao_logo"); return v && v.length ? v : DEFAULT_LOGO; },

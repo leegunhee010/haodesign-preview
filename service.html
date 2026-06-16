@@ -164,8 +164,8 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=16"></script>
-  <script src="js/main.js?v=44"></script>
+  <script src="js/data.js?v=17"></script>
+  <script src="js/main.js?v=45"></script>
   <script>
   HAO.ready.then(function () {
     "use strict";
@@ -214,7 +214,8 @@
     document.getElementById("svSeoT2").textContent = seo.t2;
     document.getElementById("svSeoP2").textContent = seo.p2;
 
-    var works = HAO.getWorks().filter(function (w) { return w.c === cat.c; });
+    /* 서비스 '제작 사례' = 포트폴리오에서 '서비스 노출' 체크한 이 카테고리 작품 우선(모자라면 자동 채움) */
+    var works = HAO.getServiceWorks ? HAO.getServiceWorks(cat.c) : HAO.getWorks().filter(function (w) { return w.c === cat.c; });
     var slots = HAO.getSlots ? HAO.getSlots() : {};
 
     /* 히어로 흐르는 이미지 6장: 슬롯 지정 우선, 없으면 포트폴리오(그리드와 겹치지 않게 뒤에서부터) */

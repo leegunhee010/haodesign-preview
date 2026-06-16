@@ -181,8 +181,8 @@
   var imgSrc = (window.HAO && HAO.imgSrc) ? HAO.imgSrc : function (f) { return "assets/work/" + f + ".jpeg"; };
   var marquee = ["work02","work03","work05","work06","work08","work09","work11","work12","work13","work14","work16","work17","work19","work21","work22","work23","work01","work04","work07","work10"];
 
-  /* ---- 메인 대표작 (관리자 '메인 대표작' 탭에서 지정) ---- */
-  var featured = (window.HAO && HAO.getFeatured) ? HAO.getFeatured() : [];
+  /* ---- 메인 '제작 사례' = 포트폴리오에서 '메인 노출' 체크한 작품 (모자라면 자동 채움) ---- */
+  var featured = (window.HAO && HAO.getMainWorks) ? HAO.getMainWorks(24) : [];
   featured = featured.filter(function (w) { return w && w.f; }); // 빈 슬롯 제외
   if (!featured.length) featured = works.slice(0, 8);
 
