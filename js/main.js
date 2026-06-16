@@ -246,7 +246,10 @@
       var copy = slide.querySelector(".phero__sub");
       if (copy) copy.innerHTML = HAO.fmt(d.copy, "b");
       var im = slide.querySelector(".phero__media img");
-      if (im) im.src = HAO.fullSrc ? HAO.fullSrc(d.img) : HAO.imgSrc(d.img);
+      if (im) {
+        var newSrc = HAO.imgSrc(d.img); // 썸네일(720px) — 히어로 폭에 충분하고 훨씬 빠름
+        if (im.getAttribute("src") !== newSrc) im.src = newSrc;
+      }
     });
   }
   if (heroTrack) {

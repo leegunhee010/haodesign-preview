@@ -12,7 +12,9 @@
 
   /* 서버에서 모든 오버라이드를 불러와 localStorage 캐시에 채움 (페이지 부팅 시 1회) */
   function sbLoad() {
-    return fetch(SB_URL + "/rest/v1/overrides?select=k,v", { headers: SB_H })
+    // 서버가 느리거나 응답이 없어도 화면이 멈추지 않도록 3초 타임아웃 (캐시로 즉시 진행)
+    var timed = new Promise(function (resolve) { setTimeout(resolve, 3000); });
+    var fetched = fetch(SB_URL + "/rest/v1/overrides?select=k,v", { headers: SB_H })
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (rows) {
         var seen = {};
@@ -29,6 +31,8 @@
         }
       })
       .catch(function () { /* 오프라인 시 로컬 캐시로 동작 */ });
+    // 둘 중 먼저 끝나는 쪽으로 진행 — 서버가 빠르면 즉시 최신값, 느리면 3초 후 캐시로 렌더
+    return Promise.race([fetched, timed]);
   }
 
   /* 키 하나를 서버에 저장(upsert) — 관리자 저장 시 호출 */
@@ -238,7 +242,7 @@
     { key: "cnt4_n", page: "index", sel: ".intro .counter:nth-child(4) strong", attr: "data-to", label: "지표④ 숫자", value: "5" },
     { key: "cnt4_t", page: "index", sel: ".intro .counter:nth-child(4) em", tag: "b", label: "지표④ 이름", value: "다국어 대응" },
     { key: "diff_title", page: "index", sel: ".diff__title", tag: "em", label: "강점 섹션 제목",
-      value: "수십 개 기업이 **반복적으로**\n아르시에를 찾는 이유" },
+      value: "수십 개 기업이 **반복적으로**\n하오디자인을 찾는 이유" },
     { key: "diff_sub", page: "index", sel: ".diff__sub", tag: "b", label: "강점 섹션 설명",
       value: "단지 예쁘게만 만들어주는 디자인 회사가 아닙니다.\n걱정을 덜어주고, 결과까지 책임지는 기업 파트너 입니다." },
     { key: "dcard1", page: "index", sel: ".diff__cards .dcard:nth-child(1) h3", tag: "b", label: "강점 카드① 제목",
