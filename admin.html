@@ -465,9 +465,9 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=14"></script>
+  <script src="js/data.js?v=15"></script>
   <script>
-  (function () {
+  HAO.ready.then(function () {
     "use strict";
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -493,8 +493,15 @@
 
     /* localStorage 용량 초과 보호 */
     function store(key, value) {
-      try { localStorage.setItem(key, JSON.stringify(value)); return true; }
-      catch (e) { alert("저장 공간이 가득 찼습니다. 업로드 이미지 수를 줄이거나 기존 항목을 삭제해주세요."); return false; }
+      try { localStorage.setItem(key, JSON.stringify(value)); }
+      catch (e) { /* 로컬 캐시 가득 — 서버 저장은 계속 진행 */ }
+      /* 서버(Supabase)에도 저장 → 모든 방문자에게 반영 */
+      if (window.HAO && HAO.set) {
+        HAO.set(key, value).then(function (r) {
+          if (r && !r.ok) console.warn("서버 저장 실패", key, r.status);
+        }).catch(function () { console.warn("서버 연결 실패", key); });
+      }
+      return true;
     }
 
     /* ---- 로그인 (아이디 + 비밀번호) ---- */
@@ -559,12 +566,23 @@
       if (store("hao_posts", posts)) renderAll();
     }
 
+    /* ---- 견적 문의: 서버에서 비동기 조회 ---- */
+    function refreshInq() {
+      HAO.fetchInquiries().then(function (inq) {
+        $("stInq").textContent = inq.length; $("cntInq").textContent = inq.length;
+        $("inqList").innerHTML = inq.length ? inq.map(function (q) {
+          return '<div class="row"><div class="t"><b>' + esc(q.name) + " · " + esc(q.phone) + (q.type ? " · " + esc(q.type) : "") + "</b>" +
+            "<small>" + esc(q.date) + (q.message ? " — " + esc(q.message) : "") + "</small></div>" +
+            '<div class="ops"><button class="btn btn--danger" data-del-inq="' + q.id + '">삭제</button></div></div>';
+        }).join("") : '<p class="empty">접수된 문의가 없습니다.</p>';
+      });
+    }
+
     /* ---- 렌더 ---- */
     function renderAll() {
-      var inq = HAO.getInquiries();
       $("stWorks").textContent = works.length; $("cntWorks").textContent = works.length;
       $("stPosts").textContent = posts.length; $("cntPosts").textContent = posts.length;
-      $("stInq").textContent = inq.length; $("cntInq").textContent = inq.length;
+      refreshInq();
 
       /* 히어로 */
       $("heroCards").innerHTML = hero.map(function (h, i) {
@@ -676,12 +694,6 @@
           '<button class="btn btn--danger" data-del-rev="' + i + '">삭제</button></div></div>';
       }).join("") : '<p class="empty">후기가 없습니다.</p>';
 
-      /* 문의 */
-      $("inqList").innerHTML = inq.length ? inq.map(function (q, i) {
-        return '<div class="row"><div class="t"><b>' + esc(q.name) + " · " + esc(q.phone) + (q.type ? " · " + esc(q.type) : "") + "</b>" +
-          "<small>" + esc(q.date) + (q.message ? " — " + esc(q.message) : "") + "</small></div>" +
-          '<div class="ops"><button class="btn btn--danger" data-del-inq="' + i + '">삭제</button></div></div>';
-      }).join("") : '<p class="empty">접수된 문의가 없습니다.</p>';
 
       /* 설정 */
       var st = HAO.getSettings();
@@ -978,7 +990,7 @@
       if (b.hasAttribute("data-feat-down")) { var fj = parseInt(b.getAttribute("data-feat-down"), 10); if (fj < featured.length-1) { var u = featured[fj]; featured[fj] = featured[fj+1]; featured[fj+1] = u; saveFeatured(); } }
       if (b.hasAttribute("data-del-ptn")) { partners.splice(parseInt(b.getAttribute("data-del-ptn"), 10), 1); savePartners(); }
       if (b.hasAttribute("data-del-gov")) { govLogos.splice(parseInt(b.getAttribute("data-del-gov"), 10), 1); saveGov(); }
-      if (b.hasAttribute("data-del-inq")) { var inq = HAO.getInquiries(); inq.splice(parseInt(b.getAttribute("data-del-inq"), 10), 1); localStorage.setItem("hao_inquiries", JSON.stringify(inq)); renderAll(); }
+      if (b.hasAttribute("data-del-inq")) { if (confirm("이 문의를 삭제할까요?")) { HAO.deleteInquiry(b.getAttribute("data-del-inq")).then(refreshInq); } }
     });
 
     /* ---- 고객 후기 CRUD ---- */
@@ -1058,7 +1070,7 @@
 
     /* ---- 세션 복원 (모든 초기화 후) ---- */
     if (sessionStorage.getItem("hao_admin") === "1") { localStorage.setItem("hao_edit", "1"); showAdmin(); }
-  })();
+  });
   </script>
 </body>
 </html>

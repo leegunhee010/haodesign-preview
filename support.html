@@ -249,11 +249,11 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=14"></script>
+  <script src="js/data.js?v=15"></script>
 
-  <script src="js/main.js?v=41"></script>
+  <script src="js/main.js?v=42"></script>
   <script>
-  (function () {
+  HAO.ready.then(function () {
     "use strict";
     /* 수행기관 로고: 관리자 '이미지·로고' 탭 데이터 (이음새 없게 충분히 반복) */
     if (!window.HAO || !HAO.getGov) return;
@@ -264,7 +264,7 @@
     var html = ""; for (var i = 0; i < rep; i++) html += unit;
     document.getElementById("govSetA").innerHTML = html;
     document.getElementById("govSetB").innerHTML = html;
-  })();
+  });
   </script>
 </body>
 </html>

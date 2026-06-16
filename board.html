@@ -143,10 +143,10 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=14"></script>
-  <script src="js/main.js?v=41"></script>
+  <script src="js/data.js?v=15"></script>
+  <script src="js/main.js?v=42"></script>
   <script>
-  (function () {
+  HAO.ready.then(function () {
     "use strict";
     /* 글 데이터는 js/data.js — 관리자에서 수정 가능 */
     var posts = HAO.getPosts();
@@ -200,7 +200,7 @@
     }
     window.addEventListener("hashchange", render);
     render();
-  })();
+  });
   </script>
 </body>
 </html>

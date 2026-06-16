@@ -164,10 +164,10 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=14"></script>
-  <script src="js/main.js?v=41"></script>
+  <script src="js/data.js?v=15"></script>
+  <script src="js/main.js?v=42"></script>
   <script>
-  (function () {
+  HAO.ready.then(function () {
     "use strict";
     /* 서비스 카테고리 콘텐츠 — js/data.js DEFAULT_SERVICE (관리자 '서비스 페이지' 탭에서 수정) */
     var CATS = HAO.getService();
@@ -244,7 +244,7 @@
         '<div class="wcard__info"><span class="wcard__title">' + w.t + '</span><span class="wcard__cat">' + w.c + '</span></div>' +
         '</article>';
     }).join("");
-  })();
+  });
   </script>
 </body>
 </html>

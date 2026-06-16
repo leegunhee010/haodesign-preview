@@ -229,11 +229,11 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=14"></script>
+  <script src="js/data.js?v=15"></script>
 
-  <script src="js/main.js?v=41"></script>
+  <script src="js/main.js?v=42"></script>
   <script>
-  (function () {
+  HAO.ready.then(function () {
     "use strict";
     /* 일하는 방식: 스크롤 핀 — 스크롤 진행도에 따라 메뉴/패널 전환 */
     var wrap = document.getElementById("hwayWrap");
@@ -290,7 +290,7 @@
         }
       });
     });
-  })();
+  });
   </script>
 </body>
 </html>

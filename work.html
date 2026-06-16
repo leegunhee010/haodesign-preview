@@ -130,10 +130,10 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=14"></script>
-  <script src="js/main.js?v=41"></script>
+  <script src="js/data.js?v=15"></script>
+  <script src="js/main.js?v=42"></script>
   <script>
-  (function () {
+  HAO.ready.then(function () {
     "use strict";
     /* 작품 데이터는 js/data.js — 관리자에서 수정 가능 */
     var KEY = { "카탈로그·브로슈어": "catalog", "리플렛": "leaflet", "포스터·전단지": "poster", "CI·로고디자인": "ci", "패키지·라벨": "package", "촬영서비스": "photo", "다국어디자인": "global" };
@@ -170,7 +170,7 @@
       });
       empty.hidden = shown > 0;
     });
-  })();
+  });
   </script>
 </body>
 </html>

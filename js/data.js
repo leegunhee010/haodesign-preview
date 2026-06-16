@@ -1,10 +1,47 @@
 /* ===================================================
-   HAO DESIGN — shared data layer (demo)
-   기본 데이터 + 관리자(localStorage) 오버라이드.
-   실서비스에서는 이 파일의 get/save 를 API 호출로 교체.
+   HAO DESIGN — shared data layer
+   기본 데이터 + 관리자 오버라이드(Supabase 서버 + localStorage 캐시).
 =================================================== */
 (function () {
   "use strict";
+
+  /* ---- Supabase 연결 ---- */
+  var SB_URL = "https://oaqrjrrgntlqmyxxovfn.supabase.co";
+  var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hcXJqcnJnbnRscW15eHhvdmZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NjQzMTUsImV4cCI6MjA5NzE0MDMxNX0.3bOfZOXVKSoI9ELfE7ZjWETuxvjpNYHdCBSIMrbAGtU";
+  var SB_H = { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json" };
+
+  /* 서버에서 모든 오버라이드를 불러와 localStorage 캐시에 채움 (페이지 부팅 시 1회) */
+  function sbLoad() {
+    return fetch(SB_URL + "/rest/v1/overrides?select=k,v", { headers: SB_H })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (rows) {
+        var seen = {};
+        rows.forEach(function (row) {
+          seen[row.k] = 1;
+          try { localStorage.setItem(row.k, JSON.stringify(row.v)); } catch (e) {}
+        });
+        // 서버에서 지워진 키는 로컬 캐시에서도 제거 (hao_ 접두사만)
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var lk = localStorage.key(i);
+          if (lk && lk.indexOf("hao_") === 0 && lk !== "hao_admin_cred" && lk !== "hao_edit" && !seen[lk]) {
+            localStorage.removeItem(lk);
+          }
+        }
+      })
+      .catch(function () { /* 오프라인 시 로컬 캐시로 동작 */ });
+  }
+
+  /* 키 하나를 서버에 저장(upsert) — 관리자 저장 시 호출 */
+  function sbSave(k, v) {
+    return fetch(SB_URL + "/rest/v1/overrides", {
+      method: "POST",
+      headers: { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates" },
+      body: JSON.stringify([{ k: k, v: v, updated_at: new Date().toISOString() }])
+    });
+  }
+  function sbDelete(k) {
+    return fetch(SB_URL + "/rest/v1/overrides?k=eq." + encodeURIComponent(k), { method: "DELETE", headers: SB_H });
+  }
 
   /* 이미지 키 → 실제 경로
      "work01" → assets/work/work01.jpeg
@@ -508,6 +545,17 @@
   window.HAO = {
     imgSrc: imgSrc,
     fullSrc: fullSrc,
+    /* 서버 로딩 완료 Promise — 페이지/관리자는 이걸 기다린 뒤 렌더 */
+    ready: sbLoad(),
+    /* 관리자 저장: localStorage + 서버 동시 기록 */
+    set: function (k, v) {
+      try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+      return sbSave(k, v);
+    },
+    remove: function (k) {
+      localStorage.removeItem(k);
+      return sbDelete(k);
+    },
     getWorks: function () { return load("hao_works", DEFAULT_WORKS); },
     getPosts: function () { return load("hao_posts", DEFAULT_POSTS); },
     getHero: function () { return load("hao_hero", DEFAULT_HERO); },
@@ -558,12 +606,25 @@
     },
     /* 관리자 계정 (데모 — 실서비스에선 서버 인증으로 교체) */
     getCred: function () { return loadObj("hao_admin_cred", { id: "admin", pw: "first1234" }); },
-    getInquiries: function () { return load("hao_inquiries", []); },
+    /* 견적 문의 — Supabase inquiries 테이블 */
     saveInquiry: function (q) {
-      var list = this.getInquiries();
-      q.date = new Date().toLocaleString("ko-KR");
-      list.unshift(q);
-      localStorage.setItem("hao_inquiries", JSON.stringify(list));
+      return fetch(SB_URL + "/rest/v1/inquiries", {
+        method: "POST", headers: SB_H,
+        body: JSON.stringify([{ name: q.name, phone: q.phone, type: q.type || "", message: q.message || "" }])
+      });
+    },
+    fetchInquiries: function () {
+      return fetch(SB_URL + "/rest/v1/inquiries?select=*&order=created_at.desc", { headers: SB_H })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (rows) {
+          return rows.map(function (r) {
+            return { id: r.id, name: r.name, phone: r.phone, type: r.type, message: r.message,
+                     date: r.created_at ? new Date(r.created_at).toLocaleString("ko-KR") : "" };
+          });
+        }).catch(function () { return []; });
+    },
+    deleteInquiry: function (id) {
+      return fetch(SB_URL + "/rest/v1/inquiries?id=eq." + id, { method: "DELETE", headers: SB_H });
     },
     /* **텍스트** → <tag>텍스트</tag> (HTML escape 포함) */
     fmt: function (s, tag) {

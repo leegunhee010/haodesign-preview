@@ -3,6 +3,7 @@
 =================================================== */
 (function () {
   "use strict";
+  function run() {
   var mq = function (q) { return window.matchMedia(q).matches; };
   var reduce = mq("(prefers-reduced-motion: reduce)");
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
@@ -756,4 +757,6 @@
       form.reset();
     });
   }
+  }
+  if (window.HAO && HAO.ready && HAO.ready.then) { HAO.ready.then(run); } else { run(); }
 })();
