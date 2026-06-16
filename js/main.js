@@ -181,16 +181,21 @@
   var imgSrc = (window.HAO && HAO.imgSrc) ? HAO.imgSrc : function (f) { return "assets/work/" + f + ".jpeg"; };
   var marquee = ["work02","work03","work05","work06","work08","work09","work11","work12","work13","work14","work16","work17","work19","work21","work22","work23","work01","work04","work07","work10"];
 
-  /* ---- 메인 '제작 사례' = 포트폴리오에서 '메인 노출' 체크한 작품 (모자라면 자동 채움) ---- */
-  var featured = (window.HAO && HAO.getMainWorks) ? HAO.getMainWorks(24) : [];
-  featured = featured.filter(function (w) { return w && w.f; }); // 빈 슬롯 제외
-  if (!featured.length) featured = works.slice(0, 8);
+  /* ---- 메인 '제작 사례' 모자이크 = 포트폴리오에서 '메인 노출' 체크한 작품 (모자라면 자동 채움) ---- */
+  var mosaicItems = (window.HAO && HAO.getMainWorks) ? HAO.getMainWorks(24) : [];
+  mosaicItems = mosaicItems.filter(function (w) { return w && w.f; });
+  if (!mosaicItems.length) mosaicItems = works.slice(0, 8);
+
+  /* ---- 상단 흐르는 띠(롤링바) = 관리자 '흐르는 띠' 탭에서 지정, 없으면 메인 노출 작품으로 폴백 ---- */
+  var rolling = (window.HAO && HAO.getFeatured) ? HAO.getFeatured() : [];
+  rolling = rolling.filter(function (w) { return w && w.f; });
+  if (!rolling.length) rolling = mosaicItems;
 
   /* ---- Inject portfolio mosaic (main page): 지정한 대표작 7장, lg + 4 + 2 wide ---- */
   var workGrid = document.getElementById("workGrid");
-  if (workGrid && workGrid.classList.contains("work__grid--mosaic") && featured.length) {
+  if (workGrid && workGrid.classList.contains("work__grid--mosaic") && mosaicItems.length) {
     var sizes = ["lg", "", "", "", "", "wide", "wide"];
-    workGrid.innerHTML = featured.slice(0, 7).map(function (w, idx) {
+    workGrid.innerHTML = mosaicItems.slice(0, 7).map(function (w, idx) {
       var size = sizes[idx] || "";
       return '<article class="wcard reveal' + (size ? " wcard--" + size : "") + '" style="--d:' + idx + '">' +
         '<div class="wcard__media"><img src="' + imgSrc(w.f) + '" alt="' + w.t + '" loading="lazy" /></div>' +
@@ -221,10 +226,10 @@
   }
   var trackTop = document.getElementById("trackTop");
   var trackBot = document.getElementById("trackBot");
-  if (trackTop && featured.length) {
-    var mqHalf = Math.ceil(featured.length / 2);
-    var mq1 = featured.slice(0, mqHalf);
-    var mq2 = featured.slice(mqHalf);
+  if (trackTop && rolling.length) {
+    var mqHalf = Math.ceil(rolling.length / 2);
+    var mq1 = rolling.slice(0, mqHalf);
+    var mq2 = rolling.slice(mqHalf);
     if (!mq2.length) mq2 = mq1;
     fillTrack(trackTop, mq1);
     fillTrack(trackBot, mq2);
