@@ -232,13 +232,8 @@
     document.getElementById("svImgsB").innerHTML = ib + ib;
 
     document.getElementById("svWorksT").textContent = cat.label + " 작업 사례";
-    /* 작업 사례 4장: 슬롯 지정 우선, 없으면 포트폴리오 자동 */
-    var gridItems = [];
-    for (var gi = 0; gi < 4; gi++) {
-      var ov = slots["svc_" + key + "_" + gi];
-      if (ov) gridItems.push({ f: ov, t: cat.label, c: cat.label });
-      else if (works[gi]) gridItems.push(works[gi]);
-    }
+    /* 작업 사례 4장: 포트폴리오에서 '서비스 노출' 체크한 이 카테고리 작품 (모자라면 자동 채움) */
+    var gridItems = works.slice(0, 4);
     document.getElementById("svGrid").innerHTML = gridItems.map(function (w) {
       return '<article class="wcard">' +
         '<div class="wcard__media"><img src="' + HAO.imgSrc(w.f) + '" alt="' + w.t + '" loading="lazy" /></div>' +
