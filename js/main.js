@@ -207,14 +207,17 @@
 
   /* ---- Inject marquee images (포트폴리오에서 끌어옴 — 관리자 수정 반영) ---- */
   function fillTrack(el, list) {
-    if (!el) return;
-    var html = "";
-    for (var d = 0; d < 2; d++) {
-      list.forEach(function (w) {
-        html += '<img src="' + imgSrc(w.f) + '" alt="" loading="lazy" />';
-      });
-    }
-    el.innerHTML = html;
+    if (!el || !list.length) return;
+    var one = "";
+    list.forEach(function (w) {
+      one += '<img src="' + imgSrc(w.f) + '" alt="" loading="lazy" />';
+    });
+    el.innerHTML = one;                       // 한 세트 먼저 넣고 폭 측정
+    var unitW = el.scrollWidth || 1;
+    var k = Math.max(1, Math.ceil((window.innerWidth * 1.15) / unitW)); // 화면 폭 채울 만큼 반복
+    var unit = "";
+    for (var r = 0; r < k; r++) unit += one;
+    el.innerHTML = unit + unit;               // 2배 복제 → 이음새 없는 -50% 루프
   }
   var trackTop = document.getElementById("trackTop");
   var trackBot = document.getElementById("trackBot");
