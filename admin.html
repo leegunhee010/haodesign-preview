@@ -469,7 +469,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=18"></script>
+  <script src="js/data.js?v=19"></script>
   <script>
   HAO.ready.then(function () {
     "use strict";
@@ -477,6 +477,8 @@
     function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
     /* ---- 이미지 업로드: 자동 리사이즈(최대 1280px) + JPEG 압축 → base64 ---- */
+    /* 이미지를 1280px로 리사이즈 후 Storage에 업로드 → URL을 콜백.
+       업로드 실패 시 base64로 폴백(끊김 없이 동작) */
     function fileToDataURL(file, cb) {
       if (!file || !/^image\//.test(file.type)) { alert("이미지 파일을 선택해주세요."); return; }
       var img = new Image();
@@ -489,7 +491,13 @@
         c.height = Math.round(img.height * scale);
         c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
         URL.revokeObjectURL(url);
-        cb(c.toDataURL("image/jpeg", 0.82));
+        var b64 = c.toDataURL("image/jpeg", 0.82);
+        if (window.HAO && HAO.uploadImage && c.toBlob) {
+          c.toBlob(function (blob) {
+            if (!blob) { cb(b64); return; }
+            HAO.uploadImage(blob, "jpg").then(function (storedUrl) { cb(storedUrl || b64); });
+          }, "image/jpeg", 0.82);
+        } else { cb(b64); }
       };
       img.onerror = function () { URL.revokeObjectURL(url); alert("이미지를 읽을 수 없습니다."); };
       img.src = url;

@@ -56,6 +56,19 @@
     return fetch(SB_URL + "/rest/v1/overrides?k=eq." + encodeURIComponent(k), { method: "DELETE", headers: SB_H });
   }
 
+  /* 이미지 파일(Blob)을 Storage('images' 버킷)에 업로드 → 공개 URL 반환.
+     실패 시 null (호출부에서 base64로 폴백) */
+  function sbUpload(blob, ext) {
+    var name = "img_" + Date.now() + "_" + Math.floor(Math.random() * 1e9).toString(36) + "." + (ext || "jpg");
+    return fetch(SB_URL + "/storage/v1/object/images/" + name, {
+      method: "POST",
+      headers: { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": blob.type || "image/jpeg", "x-upsert": "true" },
+      body: blob
+    }).then(function (r) {
+      return r.ok ? (SB_URL + "/storage/v1/object/public/images/" + name) : null;
+    }).catch(function () { return null; });
+  }
+
   /* 이미지 키 → 실제 경로
      "work01" → assets/work/work01.jpeg
      "img:big_slide_02" → assets/img/big_slide_02.jpg
@@ -569,6 +582,7 @@
       localStorage.removeItem(k);
       return sbDelete(k);
     },
+    uploadImage: sbUpload,
     getWorks: function () { return load("hao_works", DEFAULT_WORKS); },
     getPosts: function () { return load("hao_posts", DEFAULT_POSTS); },
     getHero: function () { return load("hao_hero", DEFAULT_HERO); },
