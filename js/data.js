@@ -12,8 +12,17 @@
 
   /* 서버에서 모든 오버라이드를 불러와 localStorage 캐시에 채움 (페이지 부팅 시 1회) */
   function sbLoad() {
-    // 서버가 느리거나 응답이 없어도 화면이 멈추지 않도록 3초 타임아웃 (캐시로 즉시 진행)
-    var timed = new Promise(function (resolve) { setTimeout(resolve, 3000); });
+    // 캐시(이전 방문 데이터)가 있으면 빠르게 그걸로 렌더, 없으면(첫 방문) 서버를 충분히 기다려
+    // 기본이미지 → 실제이미지로 깜빡이는 현상 방지
+    var hasCache = false;
+    try {
+      for (var ci = 0; ci < localStorage.length; ci++) {
+        var ck = localStorage.key(ci);
+        if (ck && ck.indexOf("hao_") === 0 && ck !== "hao_admin_cred" && ck !== "hao_edit") { hasCache = true; break; }
+      }
+    } catch (e) {}
+    // 서버가 느리거나 응답이 없어도 화면이 멈추지 않도록 타임아웃 (캐시 있으면 3초, 첫 방문은 12초)
+    var timed = new Promise(function (resolve) { setTimeout(resolve, hasCache ? 3000 : 12000); });
     var fetched = fetch(SB_URL + "/rest/v1/overrides?select=k,v", { headers: SB_H })
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (rows) {
