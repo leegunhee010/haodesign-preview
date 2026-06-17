@@ -311,6 +311,14 @@
     });
   }
 
+  /* ---- Services: 클릭하면 해당 서비스 페이지로 이동 (모바일 포함) ---- */
+  document.querySelectorAll(".svc[data-href]").forEach(function (svc) {
+    svc.addEventListener("click", function () {
+      var href = svc.getAttribute("data-href");
+      if (href) window.location.href = href;
+    });
+  });
+
   /* ---- Services hover: 포트폴리오(관리자 데이터)에서 카테고리별로 스트립 구성 ---- */
   if (!mq("(hover: none)")) {
     document.querySelectorAll(".svc[data-cats]").forEach(function (svc) {
