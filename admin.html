@@ -554,8 +554,23 @@
     var govLogos = HAO.getGov();
     var featured = HAO.getFeatured();
     var slots = HAO.getSlots();
-    function saveWorks() { if (store("hao_works", works)) renderAll(); }
-    function saveFeatured() { if (store("hao_featured", featured)) renderAll(); }
+    /* 안전장치: 배열에 남은 base64 이미지를 저장 전에 Storage URL로 자동 변환
+       (옛 데이터가 남은 화면에서 저장해도 서버가 다시 무거워지지 않게) */
+    function sanitizeB64(arr, field, done) {
+      if (!window.HAO || !HAO.uploadImage) { done(); return; }
+      var jobs = arr.filter(function (it) { return it && typeof it[field] === "string" && it[field].indexOf("data:image") === 0; });
+      if (!jobs.length) { done(); return; }
+      var left = jobs.length;
+      jobs.forEach(function (it) {
+        fetch(it[field]).then(function (r) { return r.blob(); })
+          .then(function (b) { return HAO.uploadImage(b, "jpg"); })
+          .then(function (url) { if (url) it[field] = url; })
+          .catch(function () {})
+          .then(function () { if (--left === 0) done(); });
+      });
+    }
+    function saveWorks() { sanitizeB64(works, "f", function () { if (store("hao_works", works)) renderAll(); }); }
+    function saveFeatured() { sanitizeB64(featured, "f", function () { if (store("hao_featured", featured)) renderAll(); }); }
     function saveSlots() { if (store("hao_imgslots", slots)) renderAll(); }
     /* 슬롯 자동(포트폴리오) 폴백 이미지 */
     function slotFallback(cat) { var w = works.filter(function (x) { return x.c === cat; })[0]; return w ? HAO.imgSrc(w.f) : ""; }
