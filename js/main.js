@@ -325,23 +325,31 @@
       var strip = null;
       svc.addEventListener("mouseenter", function () {
         if (!strip) {
-          var cats = svc.getAttribute("data-cats").split(",");
-          // 해당 카테고리 작품 우선, 부족하면(3장 미만) 다른 작품으로 채움
-          var matched = works.filter(function (w) { return cats.indexOf(w.c) > -1; });
-          if (matched.length < 3) {
-            matched = matched.concat(works.filter(function (w) { return cats.indexOf(w.c) === -1; }).slice(0, 5 - matched.length));
+          // 1순위: 관리자에서 이 띠에 직접 지정한 사진(svcstrip_{key}_0..5)
+          var slots = (window.HAO && HAO.getSlots) ? HAO.getSlots() : {};
+          var key = (svc.getAttribute("data-href") || "").split("cat=")[1] || "";
+          var srcs = [];
+          for (var si = 0; si < 6; si++) { var ov = slots["svcstrip_" + key + "_" + si]; if (ov) srcs.push(ov); }
+          // 지정분이 3장 미만이면 포트폴리오(해당 카테고리)에서 자동으로 채움
+          if (srcs.length < 3) {
+            var cats = svc.getAttribute("data-cats").split(",");
+            var matched = works.filter(function (w) { return cats.indexOf(w.c) > -1; });
+            if (matched.length < 3) {
+              matched = matched.concat(works.filter(function (w) { return cats.indexOf(w.c) === -1; }).slice(0, 5));
+            }
+            matched.slice(0, 6 - srcs.length).forEach(function (w) { srcs.push(imgSrc(w.f)); });
           }
-          matched = matched.slice(0, 6);
+          srcs = srcs.slice(0, 6);
           strip = document.createElement("div");
           strip.className = "svc__strip";
           strip.setAttribute("aria-hidden", "true");
           var unit = "";
-          matched.forEach(function (w) {
-            unit += '<img src="' + imgSrc(w.f) + '" alt="" loading="lazy" />';
+          srcs.forEach(function (s) {
+            unit += '<img src="' + s + '" alt="" loading="lazy" />';
           });
           // 화면 폭을 채울 만큼 반복 (이미지 1장 ≈ 높이×37/24 + 간격)
           var imgW = Math.min(190, window.innerWidth * 0.15) * 37 / 24 + 16;
-          var rep = Math.max(2, Math.ceil((svc.clientWidth * 1.15) / (matched.length * imgW)));
+          var rep = Math.max(2, Math.ceil((svc.clientWidth * 1.15) / ((srcs.length || 1) * imgW)));
           var track = "";
           for (var d = 0; d < rep; d++) track += unit;
           strip.innerHTML = '<div class="svc__strip-track">' + track + track + "</div>";
