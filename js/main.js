@@ -340,7 +340,8 @@
       fab.className = "fab"; fab.id = "fab";
       fab.innerHTML = items.map(function (it) {
         var ext = it.k === "phone" ? "" : ' target="_blank" rel="noopener"';
-        return '<a class="fab__btn fab--' + it.k + '" href="' + it.href + '"' + ext + ' aria-label="' + it.label + '" title="' + it.label + '">' + ICON[it.k] + '</a>';
+        return '<a class="fab__btn fab--' + it.k + '" href="' + it.href + '"' + ext + ' aria-label="' + it.label + '">' +
+          '<span class="fab__label">' + it.label + '</span><span class="fab__ico">' + ICON[it.k] + '</span></a>';
       }).join("");
       document.body.appendChild(fab);
     }

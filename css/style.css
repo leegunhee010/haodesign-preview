@@ -362,17 +362,20 @@ img { display: block; max-width: 100%; }
 .svc__strip-track img { height: clamp(130px, 15vw, 190px); aspect-ratio: 37/24; object-fit: cover; border-radius: 10px; box-shadow: 0 18px 36px -20px rgba(23,21,15,.45); }
 @keyframes svcSlide { from { transform: translateX(0); } to { transform: translateX(calc(-50% - 8px)); } }
 
-/* ---------- 우측 하단 플로팅 빠른버튼 ---------- */
-.fab { position: fixed; right: clamp(14px, 2vw, 26px); bottom: clamp(16px, 3vh, 30px); z-index: 90; display: flex; flex-direction: column; gap: 12px; }
-.fab__btn { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; color: #fff; box-shadow: 0 8px 22px -6px rgba(0,0,0,.35); transition: transform .25s var(--ease), box-shadow .25s; }
-.fab__btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 14px 28px -8px rgba(0,0,0,.45); }
-.fab__btn svg { width: 28px; height: 28px; }
-.fab--kakao { background: #FAE100; color: #3A1D1D; }
-.fab--instagram { background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); }
-.fab--blog { background: #03C75A; }
-.fab--phone { background: #21b56a; }
+/* ---------- 우측 하단 플로팅 빠른버튼 (호버 시 라벨 펼침 · 에디토리얼) ---------- */
+.fab { position: fixed; right: clamp(14px, 2vw, 26px); bottom: clamp(16px, 3vh, 30px); z-index: 90; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.fab__btn { display: inline-flex; align-items: center; height: 54px; border-radius: 999px; background: var(--ink); color: #fff; overflow: hidden; box-shadow: 0 10px 26px -8px rgba(23,21,15,.5); transition: background .3s var(--ease), color .3s, box-shadow .3s, transform .3s var(--ease); }
+.fab__btn:hover { transform: translateX(-2px); box-shadow: 0 16px 32px -10px rgba(23,21,15,.6); }
+.fab__ico { flex: 0 0 54px; width: 54px; height: 54px; display: grid; place-items: center; }
+.fab__ico svg { width: 26px; height: 26px; }
+.fab__label { max-width: 0; opacity: 0; white-space: nowrap; font-weight: 700; font-size: .92rem; letter-spacing: -.02em; transition: max-width .4s var(--ease), opacity .3s, padding .4s var(--ease); }
+.fab__btn:hover .fab__label { max-width: 220px; opacity: 1; padding-left: 22px; }
+.fab--kakao:hover { background: #FAE100; color: #3A1D1D; }
+.fab--instagram:hover { background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); }
+.fab--blog:hover { background: #03C75A; }
+.fab--phone:hover { background: #21b56a; }
 .fab__txt { font-weight: 800; font-size: .82rem; letter-spacing: -.02em; }
-@media (max-width: 600px) { .fab__btn { width: 48px; height: 48px; } .fab__btn svg { width: 24px; height: 24px; } }
+@media (max-width: 600px) { .fab__btn { height: 48px; } .fab__ico { flex-basis: 48px; width: 48px; height: 48px; } .fab__ico svg { width: 23px; height: 23px; } }
 
 /* ---------- Process timeline ---------- */
 /* scroll-pinned wrapper: section stays put while the bar fills */
