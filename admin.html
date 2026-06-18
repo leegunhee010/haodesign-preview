@@ -451,6 +451,16 @@
             </form>
             <p class="note" style="margin-top:14px">저장하면 사이트의 전화 · 이메일 링크에 일괄 반영됩니다.</p>
           </div>
+          <div class="panel">
+            <h2>우측 하단 빠른버튼 (카카오 · 인스타 · 블로그 · 전화)</h2>
+            <form class="frm" id="socialForm">
+              <div class="full"><label>카카오톡 채널 / 오픈채팅 링크</label><input type="text" id="soKakao" placeholder="https://pf.kakao.com/... (비우면 버튼 숨김)" /></div>
+              <div class="full"><label>인스타그램 링크</label><input type="text" id="soInsta" placeholder="https://instagram.com/... (비우면 숨김)" /></div>
+              <div class="full"><label>블로그 링크</label><input type="text" id="soBlog" placeholder="https://blog.naver.com/... (비우면 숨김)" /></div>
+              <div class="full actions"><button type="submit" class="btn btn--primary">저장</button></div>
+            </form>
+            <p class="note" style="margin-top:14px">전 페이지 우측 하단에 뜨는 빠른버튼입니다. 링크를 비우면 그 버튼은 안 보입니다. 전화 버튼은 위 <b>대표 전화</b>를 사용합니다.</p>
+          </div>
         </section>
 
         <!-- 계정 -->
@@ -471,7 +481,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=20"></script>
+  <script src="js/data.js?v=21"></script>
   <script>
   HAO.ready.then(function () {
     "use strict";
@@ -722,6 +732,8 @@
       /* 설정 */
       var st = HAO.getSettings();
       $("setTel").value = st.tel; $("setEmail").value = st.email;
+      var so = HAO.getSocial();
+      $("soKakao").value = so.kakao || ""; $("soInsta").value = so.instagram || ""; $("soBlog").value = so.blog || "";
     }
 
     /* ---- 히어로 저장 + 이미지 업로드 ---- */
@@ -981,8 +993,16 @@
     /* ---- 설정 저장 ---- */
     $("setForm").addEventListener("submit", function (e) {
       e.preventDefault();
-      localStorage.setItem("hao_settings", JSON.stringify({ tel: $("setTel").value.trim(), email: $("setEmail").value.trim() }));
+      store("hao_settings", { tel: $("setTel").value.trim(), email: $("setEmail").value.trim() });
       alert("저장되었습니다. 사이트를 새로고침하면 반영됩니다.");
+    });
+
+    /* ---- 빠른버튼(SNS) 저장 ---- */
+    $("socialForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var tel = ($("setTel").value || "").trim() || "1666-2027";
+      store("hao_social", { kakao: $("soKakao").value.trim(), instagram: $("soInsta").value.trim(), blog: $("soBlog").value.trim(), phone: tel });
+      alert("빠른버튼이 저장되었습니다. 사이트를 새로고침하면 반영됩니다.");
     });
 
     /* ---- 계정 변경 ---- */

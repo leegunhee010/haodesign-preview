@@ -205,6 +205,9 @@
   /* 사이트 설정 */
   var DEFAULT_SETTINGS = { tel: "1666-2027", email: "sales@haodesign.co.kr" };
 
+  /* 우측 하단 플로팅 빠른버튼 (관리자에서 링크 설정) — 비어있으면 그 버튼은 숨김 */
+  var DEFAULT_SOCIAL = { kakao: "", instagram: "", blog: "", phone: "1666-2027" };
+
   /* SEO (관리자 'SEO 관리' 탭) — siteUrl + 페이지별 title/desc/keywords */
   var DEFAULT_SEO = {
     siteUrl: "https://haodesign.co.kr",
@@ -623,6 +626,7 @@
       });
     },
     getSettings: function () { return loadObj("hao_settings", DEFAULT_SETTINGS); },
+    getSocial: function () { return loadObj("hao_social", DEFAULT_SOCIAL); },
     /* SEO: 기본값에 저장된 수정값(hao_seo)을 깊은 병합 */
     getSeo: function () {
       var ov = loadObj("hao_seo", {});
