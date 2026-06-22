@@ -491,6 +491,22 @@
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
     function fmtBold(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<b style="color:var(--accent)">$1</b>'); }
+    /* 히어로 헤드라인: 신형 head(여러 줄) 우선, 없으면 구형 l1/l2/l3에서 변환 */
+    function heroHeadOf(h) {
+      if (h && h.head != null && String(h.head).trim() !== "") return String(h.head);
+      if (!h) return "";
+      var out = [];
+      if (h.l1 && h.l1.trim()) out.push(h.l1.replace(/\*\*/g, "").trim());
+      if (h.l2 && h.l2.trim()) out.push(h.l2.replace(/\*\*/g, "").trim());
+      if (h.l3 && h.l3.trim()) out.push("**" + h.l3.replace(/\*\*/g, "").trim() + "**");
+      return out.join("\n");
+    }
+    /* 헤드라인 미리보기 HTML(줄별 블록 + **강조**) */
+    function headPreview(str) {
+      return String(str || "").split("\n").map(function (s) { return s.trim(); }).filter(Boolean)
+        .map(function (line) { return '<span style="display:block">' + fmtBold(line) + "</span>"; }).join("")
+        || '<span style="display:block;opacity:.4">(헤드라인을 입력하세요)</span>';
+    }
 
     /* ---- 이미지 업로드: 자동 리사이즈(최대 1280px) + JPEG 압축 → base64 ---- */
     /* 이미지를 1280px로 리사이즈 후 Storage에 업로드 → URL을 콜백.
@@ -636,19 +652,13 @@
             '<img id="heroThumb' + i + '" src="' + HAO.imgSrc(h.img) + '" alt="" style="display:block;width:100%;aspect-ratio:37/12;object-fit:cover;opacity:.88" />' +
             '<div style="position:absolute;inset:0;background:linear-gradient(110deg,rgba(0,0,0,.75) 45%,rgba(0,0,0,.15));display:flex;flex-direction:column;justify-content:flex-end;padding:14px 18px 16px;pointer-events:none">' +
               '<span id="prevBadge' + i + '" style="display:inline-block;align-self:flex-start;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.08em;margin-bottom:7px">' + esc(h.badge) + '</span>' +
-              '<div style="font-size:clamp(12px,1.8vw,17px);font-weight:800;color:#fff;line-height:1.28;letter-spacing:-.01em;margin-bottom:6px">' +
-                '<span id="prevL1' + i + '" style="display:' + ((h.l1 || "").trim() ? "block" : "none") + '">' + esc(h.l1) + '</span>' +
-                '<span id="prevL2' + i + '" style="display:' + ((h.l2 || "").trim() ? "block" : "none") + '">' + esc(h.l2) + '</span>' +
-                '<span id="prevL3' + i + '" style="display:' + ((h.l3 || "").trim() ? "block" : "none") + '">' + fmtBold(h.l3) + '</span>' +
-              '</div>' +
+              '<div id="prevHead' + i + '" style="font-size:clamp(12px,1.8vw,17px);font-weight:800;color:#fff;line-height:1.28;letter-spacing:-.01em;margin-bottom:6px">' + headPreview(heroHeadOf(h)) + '</div>' +
               '<p id="prevCopy' + i + '" style="color:rgba(255,255,255,.78);font-size:10px;line-height:1.6;margin:0;white-space:pre-line">' + esc(h.copy) + '</p>' +
             '</div>' +
           '</div>' +
           '<div class="frm">' +
           '<div class="full"><label>뱃지 문구</label><input type="text" data-h="' + i + ':badge" value="' + esc(h.badge) + '" /></div>' +
-          '<div><label>헤드라인 1줄</label><input type="text" data-h="' + i + ':l1" value="' + esc(h.l1) + '" /></div>' +
-          '<div><label>헤드라인 2줄</label><input type="text" data-h="' + i + ':l2" value="' + esc(h.l2) + '" /></div>' +
-          '<div class="full"><label>헤드라인 3줄 (**강조**)</label><input type="text" data-h="' + i + ':l3" value="' + esc(h.l3) + '" /></div>' +
+          '<div class="full"><label>헤드라인 (한 줄에 하나씩 · <b>**단어**</b>=주황 강조)</label><textarea rows="3" data-h="' + i + ':head" placeholder="보여주는 디자인 말고&#10;**선택받는 디자인.**">' + esc(heroHeadOf(h)) + "</textarea></div>" +
           '<div class="full"><label>설명 문구</label><textarea rows="2" data-h="' + i + ':copy">' + esc(h.copy) + "</textarea></div>" +
           '<div><label>이미지 — 내 컴퓨터에서 업로드</label><input type="file" accept="image/*" data-hfile="' + i + '" /></div>' +
           "</div></div>";
@@ -748,6 +758,8 @@
         var p = el.getAttribute("data-h").split(":");
         hero[parseInt(p[0], 10)][p[1]] = el.value;
       });
+      /* 구형 l1/l2/l3 제거 → head 한 곳만 사용(헤드라인 비우면 빈 채로 유지) */
+      hero.forEach(function (h) { delete h.l1; delete h.l2; delete h.l3; });
       if (store("hao_hero", hero)) {
         renderAll();
         alert("히어로 배너가 저장되었습니다. 메인 페이지를 새로고침하면 반영됩니다.");
@@ -760,9 +772,7 @@
       var p = el.getAttribute("data-h").split(":");
       var i = p[0], f = p[1], v = el.value;
       if (f === "badge") { var b = $("prevBadge" + i); if (b) b.textContent = v; }
-      else if (f === "l1")   { var e1 = $("prevL1" + i);   if (e1) { e1.textContent = v; e1.style.display = v.trim() ? "block" : "none"; } }
-      else if (f === "l2")   { var e2 = $("prevL2" + i);   if (e2) { e2.textContent = v; e2.style.display = v.trim() ? "block" : "none"; } }
-      else if (f === "l3")   { var e3 = $("prevL3" + i);   if (e3) { e3.innerHTML = fmtBold(v); e3.style.display = v.trim() ? "block" : "none"; } }
+      else if (f === "head") { var eh = $("prevHead" + i); if (eh) eh.innerHTML = headPreview(v); }
       else if (f === "copy") { var ec = $("prevCopy" + i); if (ec) ec.textContent = v; }
     });
     document.addEventListener("change", function (e) {

@@ -136,18 +136,31 @@
         var track = document.getElementById("heroTrack");
         if (!track || !HAO.getHero) return;
         heroDataEdit = HAO.getHero();
+        /* 화면의 헤드라인(여러 줄 span, <em>=강조)을 head 문자열로 역변환 */
+        function readHead(el) {
+          var parts = [];
+          var kids = el.children;
+          if (kids.length) {
+            [].forEach.call(kids, function (node) {
+              var h = node.innerHTML.replace(/<em(\s[^>]*)?>/gi, "**").replace(/<\/em>/gi, "**").replace(/<br\s*\/?>/gi, "\n");
+              var tmp = document.createElement("div"); tmp.innerHTML = h;
+              tmp.textContent.split("\n").forEach(function (ln) { parts.push(ln); });
+            });
+          } else { el.textContent.split("\n").forEach(function (ln) { parts.push(ln); }); }
+          return parts.map(function (s) { return s.trim(); }).filter(Boolean).join("\n");
+        }
         [].slice.call(track.children).forEach(function (slide, i) {
           if (!heroDataEdit[i]) return;
-          var lines = slide.querySelectorAll(".phero__title > *");
           [[slide.querySelector(".phero__badge"), "badge", null],
-           [lines[0], "l1", null], [lines[1], "l2", null], [lines[2], "l3", null],
+           [slide.querySelector(".phero__title"), "head", "em"],
            [slide.querySelector(".phero__sub"), "copy", "b"]].forEach(function (m) {
             var el = m[0]; if (!el) return;
             el.setAttribute("contenteditable", "true");
             el.setAttribute("spellcheck", "false");
             el.classList.add("hao-editable");
             el.addEventListener("input", function () {
-              heroDataEdit[i][m[1]] = m[2] ? unfmt(el, m[2]) : el.textContent.trim();
+              if (m[1] === "head") heroDataEdit[i].head = readHead(el);
+              else heroDataEdit[i][m[1]] = m[2] ? unfmt(el, m[2]) : el.textContent.trim();
               heroDirty = true;
               edited["hero" + i + "_" + m[1]] = true; updateBar();
             });
@@ -264,6 +277,18 @@
   // fallback in case load already fired
   requestAnimationFrame(function () { setTimeout(function () { document.body.classList.add("is-ready"); }, 80); });
 
+  /* 히어로 헤드라인 문자열: 신형 head(여러 줄) 우선, 없으면 구형 l1/l2/l3에서 변환.
+     (구형은 l3 한 줄이 통째로 주황 강조였음 → **…**로 감싸 보존) */
+  function heroHead(d) {
+    if (d && d.head != null && String(d.head).trim() !== "") return String(d.head);
+    if (!d) return "";
+    var out = [];
+    if (d.l1 && d.l1.trim()) out.push(d.l1.replace(/\*\*/g, "").trim());
+    if (d.l2 && d.l2.trim()) out.push(d.l2.replace(/\*\*/g, "").trim());
+    if (d.l3 && d.l3.trim()) out.push("**" + d.l3.replace(/\*\*/g, "").trim() + "**");
+    return out.join("\n");
+  }
+
   /* ---- Hero slider (좌 카피 / 우 이미지, 페이드 전환) ---- */
   var heroTrack = document.getElementById("heroTrack");
   if (heroTrack && window.HAO && HAO.getHero) {
@@ -273,14 +298,13 @@
       var d = heroData[i]; if (!d) return;
       var badge = slide.querySelector(".phero__badge");
       if (badge) badge.textContent = d.badge;
-      var lines = slide.querySelectorAll(".phero__title > *");
-      [d.l1, d.l2, d.l3].forEach(function (t, k) {
-        if (!lines[k]) return;
-        var txt = (t || "").replace(/\*\*/g, "");
-        lines[k].textContent = txt;
-        /* 빈 줄은 접어서 2줄·1줄 헤드라인도 깔끔하게 (바로 수정 모드에선 클릭 위해 유지) */
-        if (!editMode) lines[k].style.display = txt.trim() ? "" : "none";
-      });
+      var titleEl = slide.querySelector(".phero__title");
+      /* 헤드라인: 한 칸(head)에 줄바꿈으로 여러 줄, **단어**=강조(주황).
+         빈 줄은 자동으로 빠져서 2줄·1줄도 깔끔하게. */
+      if (titleEl) {
+        titleEl.innerHTML = heroHead(d).split("\n").map(function (s) { return s.trim(); })
+          .filter(Boolean).map(function (line) { return "<span>" + HAO.fmt(line, "em") + "</span>"; }).join("");
+      }
       var copy = slide.querySelector(".phero__sub");
       if (copy) copy.innerHTML = HAO.fmt(d.copy, "b");
       var im = slide.querySelector(".phero__media img");
