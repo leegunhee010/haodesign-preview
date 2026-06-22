@@ -165,7 +165,7 @@
   </footer>
 
   <script src="js/data.js?v=22"></script>
-  <script src="js/main.js?v=54"></script>
+  <script src="js/main.js?v=55"></script>
   <script>
   HAO.ready.then(function () {
     "use strict";
@@ -240,6 +240,27 @@
         '<div class="wcard__info"><span class="wcard__title">' + w.t + '</span><span class="wcard__cat">' + w.c + '</span></div>' +
         '</article>';
     }).join("");
+
+    /* ===== 사이트에서 바로 수정 (관리자 ?edit=1) — 서비스 카테고리 콘텐츠 ===== */
+    var editMode = /[?&]edit=1/.test(location.search) && localStorage.getItem("hao_edit") === "1";
+    if (editMode && window.HAOEdit) {
+      var E = window.HAOEdit;
+      function bind(id, tag, set) {
+        var el = document.getElementById(id);
+        E.mark(el, { key: "svc_" + key + "_" + id, onInput: function (n) { set(E.read(n, tag)); } });
+      }
+      bind("svHead", "b", function (v) { cat.head = v; });   // 헤드카피 (**강조**)
+      bind("svDesc", null, function (v) { cat.desc = v; });  // 히어로 설명
+      bind("svEng", null, function (v) { cat.eng = v; });    // 영문 태그
+      bind("svCrumb", null, function (v) { cat.label = v; });// 카테고리 이름
+      bind("svSeoH", null, function (v) { seo.h = v; });     // 소개 키워드 제목
+      bind("svSeoT1", null, function (v) { seo.t1 = v; });
+      bind("svSeoP1", null, function (v) { seo.p1 = v; });
+      bind("svSeoT2", null, function (v) { seo.t2 = v; });
+      bind("svSeoP2", null, function (v) { seo.p2 = v; });
+      /* 저장: 전체 서비스 데이터(CATS)를 hao_service 오버라이드로 기록 */
+      E.onSave(function () { return (window.HAO && HAO.set) ? HAO.set("hao_service", CATS) : null; });
+    }
   });
   </script>
 </body>

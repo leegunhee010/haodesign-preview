@@ -122,7 +122,8 @@
       function unfmt(el, tag) {
         var html = el.innerHTML
           .replace(/<br\s*\/?>/gi, "\n")
-          .replace(/<div[^>]*>/gi, "\n").replace(/<\/div>/gi, "")
+          .replace(/<div[^>]*>/gi, "\n").replace(/<\/div>/gi, "");
+        if (tag) html = html
           .replace(new RegExp("<" + tag + "(\\s[^>]*)?>", "gi"), "**")
           .replace(new RegExp("</" + tag + ">", "gi"), "**");
         var tmp = document.createElement("div");
@@ -131,6 +132,25 @@
       }
 
       /* 히어로 슬라이드 텍스트도 화면에서 수정 (메인) — 렌더 이후 마킹 */
+      /* 외부 페이지(서비스 등)에서 자체 필드를 같은 인라인 편집 UI에 등록하는 API */
+      var saveHooks = [];
+      window.HAOEdit = {
+        mark: function (el, opts) {
+          if (!el) return;
+          opts = opts || {};
+          el.setAttribute("contenteditable", "true");
+          el.setAttribute("spellcheck", "false");
+          el.classList.add("hao-editable");
+          el.addEventListener("input", function () {
+            if (opts.key) edited[opts.key] = true;
+            if (opts.onInput) opts.onInput(el);
+            updateBar();
+          });
+        },
+        read: function (el, tag) { return unfmt(el, tag); },
+        onSave: function (fn) { saveHooks.push(fn); }
+      };
+
       var heroDirty = false, heroDataEdit = null;
       setTimeout(function () {
         var track = document.getElementById("heroTrack");
@@ -189,6 +209,8 @@
           localStorage.setItem("hao_copy", JSON.stringify(ov));
           if (heroDirty && heroDataEdit) localStorage.setItem("hao_hero", JSON.stringify(heroDataEdit));
         }
+        /* 외부 페이지(서비스 등)가 등록한 저장 콜백 실행 */
+        saveHooks.forEach(function (fn) { try { var p = fn(); if (p && p.then) jobs.push(p); } catch (e) {} });
         Promise.all(jobs).then(function () {
           edited = {}; updateBar();
           btn.disabled = false; btn.textContent = label;
