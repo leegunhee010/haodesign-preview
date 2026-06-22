@@ -214,16 +214,26 @@
     document.getElementById("svSeoT2").textContent = seo.t2;
     document.getElementById("svSeoP2").textContent = seo.p2;
 
-    /* 진행 과정: 카테고리별 cat.process (인쇄형=메인 단계, 촬영·다국어=일반 단계).
-       타임라인 노드/애니메이션은 유지하고 각 단계 텍스트만 교체 */
+    /* 진행 과정: 인쇄형 카테고리는 '메인 페이지'의 진행 과정(pst* 카피)을 그대로 미러링,
+       촬영·다국어는 인쇄가 안 맞으니 일반 단계 사용. (메인에서 고치면 인쇄형 서비스도 자동 반영) */
+    var copyMap = {};
+    HAO.getCopy().forEach(function (c) { copyMap[c.key] = c.value; });
+    var SVC_GENERIC = [
+      { h: "문의 접수", p: "전화(1666-2027) 또는 견적 문의로 내용을 남겨주세요." },
+      { h: "상담 · 견적", p: "담당자가 사양과 일정을 잡고 견적을 안내합니다." },
+      { h: "작업 진행", p: "자료 검토 후 시안 → 피드백 → 수정으로 완성합니다." },
+      { h: "검수 · 확정", p: "충분한 검토 후 최종 결과물을 확정합니다." },
+      { h: "최종 납품", p: "완성된 결과물을 약속한 일정에 전달합니다." }
+    ];
+    var procSteps = (key === "photo" || key === "global")
+      ? SVC_GENERIC
+      : [1, 2, 3, 4, 5].map(function (i) { return { h: copyMap["pst" + i + "_h"] || "", p: copyMap["pst" + i + "_p"] || "" }; });
     var tsteps = document.querySelectorAll("#timeline .tstep");
-    if (cat.process) {
-      cat.process.forEach(function (s, i) {
-        if (!tsteps[i]) return;
-        var h = tsteps[i].querySelector("h3"); if (h) h.innerHTML = HAO.fmt(s.h, "b");
-        var p = tsteps[i].querySelector("p"); if (p) p.innerHTML = HAO.fmt(s.p, "b");
-      });
-    }
+    procSteps.forEach(function (s, i) {
+      if (!tsteps[i]) return;
+      var h = tsteps[i].querySelector("h3"); if (h) h.innerHTML = HAO.fmt(s.h, "b");
+      var p = tsteps[i].querySelector("p"); if (p) p.innerHTML = HAO.fmt(s.p, "b");
+    });
 
     /* 서비스 '제작 사례' = 포트폴리오에서 '서비스 노출' 체크한 이 카테고리 작품 우선(모자라면 자동 채움) */
     var works = HAO.getServiceWorks ? HAO.getServiceWorks(cat.c) : HAO.getWorks().filter(function (w) { return w.c === cat.c; });
@@ -269,15 +279,7 @@
       bind("svSeoP1", null, function (v) { seo.p1 = v; });
       bind("svSeoT2", null, function (v) { seo.t2 = v; });
       bind("svSeoP2", null, function (v) { seo.p2 = v; });
-      /* 진행 과정 단계(제목·설명)도 인라인 편집 → cat.process */
-      if (cat.process) {
-        cat.process.forEach(function (step, i) {
-          if (!tsteps[i]) return;
-          var h = tsteps[i].querySelector("h3"), p = tsteps[i].querySelector("p");
-          if (h) E.mark(h, { key: "svc_" + key + "_pst" + i + "_h", onInput: function (n) { step.h = E.read(n, "b"); } });
-          if (p) E.mark(p, { key: "svc_" + key + "_pst" + i + "_p", onInput: function (n) { step.p = E.read(n, "b"); } });
-        });
-      }
+      /* 진행 과정은 메인 페이지(pst*)를 미러링하므로 여기서 편집하지 않음 — 메인에서 수정 */
       /* 저장: 전체 서비스 데이터(CATS)를 hao_service 오버라이드로 기록 */
       E.onSave(function () { return (window.HAO && HAO.set) ? HAO.set("hao_service", CATS) : null; });
     }
