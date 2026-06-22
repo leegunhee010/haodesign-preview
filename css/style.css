@@ -56,7 +56,7 @@ img { display: block; max-width: 100%; }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand__logo { height: 30px; }
 .brand__sub { font-size: .68rem; letter-spacing: .25em; opacity: .55; font-weight: 600; }
-.nav { display: flex; gap: 32px; }
+.nav { display: flex; align-items: center; gap: 32px; }
 .nav a { font-size: .92rem; font-weight: 500; position: relative; }
 .nav a::after { content: ""; position: absolute; left: 0; bottom: -4px; width: 0; height: 1px; background: var(--accent); transition: width .35s var(--ease); }
 .nav a:hover { color: var(--accent); }
@@ -66,7 +66,7 @@ img { display: block; max-width: 100%; }
 .header__cta span { transition: transform .3s var(--ease); }
 .header__cta:hover span { transform: translateX(4px); }
 /* 헤더: 서비스 드롭다운 */
-.nav__drop { position: relative; }
+.nav__drop { position: relative; display: flex; align-items: center; }
 .nav__drop-toggle::before { content: ""; display: inline-block; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-2px); margin-right: 8px; opacity: .55; vertical-align: 2px; }
 .nav__drop-menu { position: absolute; top: calc(100% + 12px); left: 50%; transform: translate(-50%, 10px); min-width: 196px; display: flex; flex-direction: column; gap: 2px; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 28px 56px -28px rgba(23,21,15,.3); opacity: 0; visibility: hidden; transition: opacity .25s var(--ease), transform .25s var(--ease), visibility .25s; z-index: 160; }
 .nav__drop-menu::before { content: ""; position: absolute; top: -14px; left: 0; right: 0; height: 14px; }
