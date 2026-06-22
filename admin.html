@@ -229,8 +229,11 @@
               <a class="btn" href="contact.html?edit=1" target="_blank">견적문의 ↗</a>
             </div>
           </div>
-          <p class="note" style="margin-bottom:14px">또는 아래 목록에서 직접 수정해도 됩니다. <b>**단어**</b> 는 강조 표시, 줄바꿈은 그대로 반영됩니다.</p>
-          <div class="panel"><div class="frm" id="copyFields" style="grid-template-columns:1fr"></div></div>
+          <p class="note" style="margin-bottom:14px">또는 아래에서 직접 수정해도 됩니다. <b>**단어**</b> 는 강조 표시, 줄바꿈은 그대로 반영됩니다.</p>
+          <div class="panel">
+            <div class="frm" style="grid-template-columns:1fr"><div><label>페이지 선택</label><select id="copyPage"></select></div></div>
+            <div class="frm" id="copyFields" style="grid-template-columns:1fr;margin-top:12px"></div>
+          </div>
         </section>
 
         <!-- 서비스 페이지 -->
@@ -487,6 +490,7 @@
     "use strict";
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+    function fmtBold(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<b style="color:var(--accent)">$1</b>'); }
 
     /* ---- 이미지 업로드: 자동 리사이즈(최대 1280px) + JPEG 압축 → base64 ---- */
     /* 이미지를 1280px로 리사이즈 후 Storage에 업로드 → URL을 콜백.
@@ -627,7 +631,19 @@
       $("heroCards").innerHTML = hero.map(function (h, i) {
         return '<div class="hero-card panel" style="padding:20px">' +
           "<h3>슬라이드 " + (i + 1) + "</h3>" +
-          '<img class="thumb" id="heroThumb' + i + '" src="' + HAO.imgSrc(h.img) + '" alt="" />' +
+          /* 실시간 미리보기 */
+          '<div style="position:relative;margin-bottom:14px;border-radius:10px;overflow:hidden;background:#111;box-shadow:0 4px 18px rgba(0,0,0,.22)">' +
+            '<img id="heroThumb' + i + '" src="' + HAO.imgSrc(h.img) + '" alt="" style="display:block;width:100%;aspect-ratio:37/12;object-fit:cover;opacity:.88" />' +
+            '<div style="position:absolute;inset:0;background:linear-gradient(110deg,rgba(0,0,0,.75) 45%,rgba(0,0,0,.15));display:flex;flex-direction:column;justify-content:flex-end;padding:14px 18px 16px;pointer-events:none">' +
+              '<span id="prevBadge' + i + '" style="display:inline-block;align-self:flex-start;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.08em;margin-bottom:7px">' + esc(h.badge) + '</span>' +
+              '<div style="font-size:clamp(12px,1.8vw,17px);font-weight:800;color:#fff;line-height:1.28;letter-spacing:-.01em;margin-bottom:6px">' +
+                '<span id="prevL1' + i + '">' + esc(h.l1) + '</span><br>' +
+                '<span id="prevL2' + i + '">' + esc(h.l2) + '</span><br>' +
+                '<span id="prevL3' + i + '">' + fmtBold(h.l3) + '</span>' +
+              '</div>' +
+              '<p id="prevCopy' + i + '" style="color:rgba(255,255,255,.78);font-size:10px;line-height:1.6;margin:0;white-space:pre-line">' + esc(h.copy) + '</p>' +
+            '</div>' +
+          '</div>' +
           '<div class="frm">' +
           '<div class="full"><label>뱃지 문구</label><input type="text" data-h="' + i + ':badge" value="' + esc(h.badge) + '" /></div>' +
           '<div><label>헤드라인 1줄</label><input type="text" data-h="' + i + ':l1" value="' + esc(h.l1) + '" /></div>' +
@@ -638,18 +654,8 @@
           "</div></div>";
       }).join("");
 
-      /* 카피 — 페이지별 그룹 */
-      var PAGE_LABEL = { all: "공통 (전 페이지)", index: "메인", about: "회사소개", support: "지원사업", service: "서비스 (공통 섹션)", work: "포트폴리오", board: "칼럼", contact: "견적문의" };
-      var copyGroups = {};
-      HAO.getCopy().forEach(function (c) { (copyGroups[c.page] = copyGroups[c.page] || []).push(c); });
-      $("copyFields").innerHTML = Object.keys(PAGE_LABEL).filter(function (p) { return copyGroups[p]; }).map(function (p) {
-        return '<h3 class="full" style="margin:22px 0 2px;padding-bottom:8px;border-bottom:2px solid var(--ink);font-size:15px">' + PAGE_LABEL[p] + "</h3>" +
-          copyGroups[p].map(function (c) {
-            var rows = c.value.length > 90 ? 3 : (c.attr ? 1 : 2);
-            return '<div class="full"><label>' + esc(c.label) + '</label>' +
-              '<textarea rows="' + rows + '" data-c="' + c.key + '">' + esc(c.value) + "</textarea></div>";
-          }).join("");
-      }).join("");
+      /* 카피 — 페이지별 (드롭다운으로 한 페이지씩) */
+      renderCopy();
 
       /* 포트폴리오 */
       $("workList").innerHTML = works.length ? works.map(function (w, i) {
@@ -746,6 +752,18 @@
         renderAll();
         alert("히어로 배너가 저장되었습니다. 메인 페이지를 새로고침하면 반영됩니다.");
       }
+    });
+    /* 히어로 실시간 미리보기 */
+    document.addEventListener("input", function (e) {
+      var el = e.target.closest("[data-h]");
+      if (!el) return;
+      var p = el.getAttribute("data-h").split(":");
+      var i = p[0], f = p[1], v = el.value;
+      if (f === "badge") { var b = $("prevBadge" + i); if (b) b.textContent = v; }
+      else if (f === "l1")   { var e1 = $("prevL1" + i);   if (e1) e1.textContent = v; }
+      else if (f === "l2")   { var e2 = $("prevL2" + i);   if (e2) e2.textContent = v; }
+      else if (f === "l3")   { var e3 = $("prevL3" + i);   if (e3) e3.innerHTML = fmtBold(v); }
+      else if (f === "copy") { var ec = $("prevCopy" + i); if (ec) ec.textContent = v; }
     });
     document.addEventListener("change", function (e) {
       var el = e.target.closest("[data-hfile]");
@@ -886,10 +904,47 @@
       closePostForm(); savePosts();
     });
 
-    /* ---- 카피 저장 ---- */
+    /* ---- 카피: 페이지별 드롭다운 ---- */
+    var COPY_PAGE_LABEL = { all: "공통 (전 페이지)", index: "메인", about: "회사소개", support: "지원사업", service: "서비스 (공통 섹션)", work: "포트폴리오", board: "칼럼", contact: "견적문의" };
+    var copyState = {};   /* key -> 현재 값 (전 페이지 통합 보관) */
+    var copyMeta = {};    /* page -> [{key,label,value,attr}] */
+    function renderCopy() {
+      copyMeta = {};
+      HAO.getCopy().forEach(function (c) {
+        (copyMeta[c.page] = copyMeta[c.page] || []).push(c);
+        if (!(c.key in copyState)) copyState[c.key] = c.value;  /* 미저장 편집은 유지 */
+      });
+      /* 드롭다운 1회 구성 */
+      if (!$("copyPage").options.length) {
+        $("copyPage").innerHTML = Object.keys(COPY_PAGE_LABEL)
+          .filter(function (p) { return copyMeta[p]; })
+          .map(function (p) { return '<option value="' + p + '">' + COPY_PAGE_LABEL[p] + "</option>"; }).join("");
+      }
+      renderCopyPage();
+    }
+    function renderCopyPage() {
+      var p = $("copyPage").value || Object.keys(copyMeta)[0];
+      var list = copyMeta[p] || [];
+      $("copyFields").innerHTML = list.map(function (c) {
+        var v = (c.key in copyState) ? copyState[c.key] : c.value;
+        var rows = v.length > 90 ? 3 : (c.attr ? 1 : 2);
+        return '<div class="full"><label>' + esc(c.label) + '</label>' +
+          '<textarea rows="' + rows + '" data-c="' + c.key + '">' + esc(v) + "</textarea></div>";
+      }).join("") || '<p class="empty">이 페이지에 편집할 카피가 없습니다.</p>';
+    }
+    $("copyPage").addEventListener("change", renderCopyPage);
+    /* 입력 즉시 통합 상태에 반영(다른 페이지로 넘어가도 유지) */
+    $("copyFields").addEventListener("input", function (e) {
+      var k = e.target.getAttribute("data-c");
+      if (k) copyState[k] = e.target.value;
+    });
+
+    /* ---- 카피 저장 (전 페이지 통합 저장) ---- */
     $("copySaveBtn").addEventListener("click", function () {
+      /* 화면에 보이는 현재 페이지 값 동기화 */
+      document.querySelectorAll("#copyFields [data-c]").forEach(function (el) { copyState[el.getAttribute("data-c")] = el.value; });
       var ov = {};
-      document.querySelectorAll("[data-c]").forEach(function (el) { ov[el.getAttribute("data-c")] = el.value; });
+      Object.keys(copyState).forEach(function (k) { ov[k] = copyState[k]; });
       if (store("hao_copy", ov)) alert("카피가 저장되었습니다. 사이트를 새로고침하면 반영됩니다.");
     });
 
