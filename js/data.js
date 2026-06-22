@@ -175,12 +175,12 @@
 
   /* 고객 후기 (관리자 '고객 후기' 탭에서 편집) — logo: 이미지 경로 또는 업로드(data:) */
   var DEFAULT_REVIEWS = [
-    { logo: "assets/partners/p46.png", msg: "정보 정리부터 사진까지 알아서 챙겨주셔서 편했어요. 거래처 반응이 확실히 좋아졌습니다.", cite: "제조업 마케팅팀 김OO" },
-    { logo: "assets/partners/p52.png", msg: "수출용 브로슈어를 영문·중문으로 동시에. 톤이 일관되게 잘 나왔습니다.", cite: "뷰티 브랜드 대표 이OO" },
-    { logo: "assets/partners/p58.png", msg: "급한 일정에도 퀄리티를 놓치지 않았어요. 인쇄·후가공까지 한 번에 끝나 만족합니다.", cite: "식품 회사 홍보 박OO" },
-    { logo: "assets/partners/p70.png", msg: "시안 단계부터 방향을 잘 잡아주셔서 수정이 거의 없었어요. 소통이 정말 편합니다.", cite: "IT 스타트업 대표 최OO" },
-    { logo: "assets/partners/p80.png", msg: "회사소개서 덕분에 미팅 분위기가 달라졌습니다. 디자인이 영업을 한다는 걸 처음 느꼈어요.", cite: "건설사 기획팀 정OO" },
-    { logo: "assets/partners/p93.png", msg: "패키지 리뉴얼 후 매대에서 확실히 눈에 띕니다. 다음 라인업도 맡길 예정이에요.", cite: "식품 브랜드 마케터 한OO" }
+    { logo: "assets/partners/p46.png", msg: "회사 안내 자료를 새로 만들면서 신뢰감이 확 살았어요. 고객 응대 현장에서 반응이 좋습니다.", cite: "보험사 마케팅팀 김OO 팀장" },
+    { logo: "assets/partners/p52.png", msg: "브랜드 톤을 정확히 잡아주셔서 홍보물이 일관돼졌어요. 소통도 빠르고 편했습니다.", cite: "은행 홍보팀 이OO 과장" },
+    { logo: "assets/partners/p58.png", msg: "모집 시즌 급한 일정에도 퀄리티를 놓치지 않으셨어요. 인쇄·납품까지 한 번에 끝나 든든했습니다.", cite: "대학교 홍보팀 박OO 주임" },
+    { logo: "assets/partners/p70.png", msg: "전시·행사 홍보물을 시안 단계부터 방향을 잘 잡아주셨어요. 멀리서도 눈에 잘 띕니다.", cite: "문화재단 기획팀 최OO 대리" },
+    { logo: "assets/partners/p80.png", msg: "영문·국문 자료를 같은 톤으로 정리해주셔서 해외 협력 자리에서 깔끔했습니다.", cite: "연구기관 대외협력팀 윤OO 선임" },
+    { logo: "assets/partners/p93.png", msg: "패키지 리뉴얼 후 매대에서 확실히 눈에 띕니다. 다음 라인업도 맡길 예정이에요.", cite: "식품기업 마케팅팀 한OO 과장" }
   ];
 
   /* 사이트 설정 */
