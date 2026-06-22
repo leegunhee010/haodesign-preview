@@ -164,7 +164,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=24"></script>
+  <script src="js/data.js?v=26"></script>
   <script src="js/main.js?v=55"></script>
   <script>
   HAO.ready.then(function () {
@@ -225,9 +225,12 @@
       { h: "검수 · 확정", p: "충분한 검토 후 최종 결과물을 확정합니다." },
       { h: "최종 납품", p: "완성된 결과물을 약속한 일정에 전달합니다." }
     ];
-    var procSteps = (key === "photo" || key === "global")
-      ? SVC_GENERIC
-      : [1, 2, 3, 4, 5].map(function (i) { return { h: copyMap["pst" + i + "_h"] || "", p: copyMap["pst" + i + "_p"] || "" }; });
+    /* 우선순위: ① 이 카테고리에서 따로 수정한 단계(cat.process) → ② 촬영·다국어 일반 단계
+       → ③ 그 외(인쇄형)는 메인 페이지(pst*) 미러링 */
+    var mainProc = [1, 2, 3, 4, 5].map(function (i) { return { h: copyMap["pst" + i + "_h"] || "", p: copyMap["pst" + i + "_p"] || "" }; });
+    var procSteps = (cat.process && cat.process.length) ? cat.process
+      : (key === "photo" || key === "global") ? SVC_GENERIC
+      : mainProc;
     var tsteps = document.querySelectorAll("#timeline .tstep");
     procSteps.forEach(function (s, i) {
       if (!tsteps[i]) return;
@@ -279,7 +282,19 @@
       bind("svSeoP1", null, function (v) { seo.p1 = v; });
       bind("svSeoT2", null, function (v) { seo.t2 = v; });
       bind("svSeoP2", null, function (v) { seo.p2 = v; });
-      /* 진행 과정은 메인 페이지(pst*)를 미러링하므로 여기서 편집하지 않음 — 메인에서 수정 */
+      /* 진행 과정도 이 카테고리만 따로 수정 가능. 편집하면 그때 cat.process(override) 생성
+         → 그 전까지는 기본값(메인/일반)을 따라가고, 한 번 고치면 이 카테고리만 독립 */
+      function ensureProc() {
+        if (!cat.process || !cat.process.length) {
+          cat.process = procSteps.map(function (s) { return { h: s.h, p: s.p }; });
+        }
+        return cat.process;
+      }
+      tsteps.forEach(function (ts, i) {
+        var h = ts.querySelector("h3"), p = ts.querySelector("p");
+        if (h) E.mark(h, { key: "svc_" + key + "_pst" + i + "_h", onInput: function (n) { ensureProc()[i].h = E.read(n, "b"); } });
+        if (p) E.mark(p, { key: "svc_" + key + "_pst" + i + "_p", onInput: function (n) { ensureProc()[i].p = E.read(n, "b"); } });
+      });
       /* 저장: 전체 서비스 데이터(CATS)를 hao_service 오버라이드로 기록 */
       E.onSave(function () { return (window.HAO && HAO.set) ? HAO.set("hao_service", CATS) : null; });
     }
