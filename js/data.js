@@ -440,16 +440,7 @@
     /* ───── 서비스 페이지 (공통 정적 섹션) ───── */
     { key: "sv_ptag", page: "service", sel: "main > section:nth-of-type(2) .section-tag", tag: "b", label: "진행 과정 — 섹션 태그", value: "PROCESS" },
     { key: "sv_ptitle", page: "service", sel: "main > section:nth-of-type(2) .page__title", tag: "b", label: "진행 과정 — 제목", value: "진행 과정" },
-    { key: "svt1_h", page: "service", sel: ".timeline .tstep:nth-child(2) h3", tag: "b", label: "진행 과정① 제목", value: "문의 접수" },
-    { key: "svt1_p", page: "service", sel: ".timeline .tstep:nth-child(2) p", tag: "b", label: "진행 과정① 설명", value: "전화(1666-2027) 또는 견적 문의로 내용을 남겨주세요." },
-    { key: "svt2_h", page: "service", sel: ".timeline .tstep:nth-child(3) h3", tag: "b", label: "진행 과정② 제목", value: "상담 · 견적" },
-    { key: "svt2_p", page: "service", sel: ".timeline .tstep:nth-child(3) p", tag: "b", label: "진행 과정② 설명", value: "담당자가 사양과 일정을 잡고 견적을 안내합니다." },
-    { key: "svt3_h", page: "service", sel: ".timeline .tstep:nth-child(4) h3", tag: "b", label: "진행 과정③ 제목", value: "디자인 작업" },
-    { key: "svt3_p", page: "service", sel: ".timeline .tstep:nth-child(4) p", tag: "b", label: "진행 과정③ 설명", value: "자료 검토 후 시안 → 피드백 → 수정으로 완성합니다." },
-    { key: "svt4_h", page: "service", sel: ".timeline .tstep:nth-child(5) h3", tag: "b", label: "진행 과정④ 제목", value: "시안 확정 · 제작" },
-    { key: "svt4_p", page: "service", sel: ".timeline .tstep:nth-child(5) p", tag: "b", label: "진행 과정④ 설명", value: "최종 승인 후 인쇄 · 후가공을 진행합니다." },
-    { key: "svt5_h", page: "service", sel: ".timeline .tstep:nth-child(6) h3", tag: "b", label: "진행 과정⑤ 제목", value: "최종 납품" },
-    { key: "svt5_p", page: "service", sel: ".timeline .tstep:nth-child(6) p", tag: "b", label: "진행 과정⑤ 설명", value: "완성된 결과물을 약속한 일정에 전달합니다." },
+    /* 진행 과정 단계(svt*)는 카테고리별 cat.process 로 이동 — service.html에서 렌더/편집 */
     { key: "sv_wtag", page: "service", sel: "main > section:nth-of-type(3) .section-tag", tag: "b", label: "작업 사례 — 섹션 태그", value: "WORKS" },
 
     /* ───── 서브 페이지 상단 ───── */
@@ -543,6 +534,26 @@
         p2: "다국어 카탈로그 제작을 준비할 때는 원본 디자인 파일과 언어별 번역문을 함께 준비하면 진행이 빠릅니다. 번역문이 없는 경우 번역 협업도 가능하며, 언어가 늘어도 일관된 톤을 유지하도록 같은 팀이 전체 언어를 관리하는 것이 좋습니다. 하오디자인은 영어 · 중국어 · 일본어 등 다국어 편집을 원본 제작과 함께 원스톱으로 진행합니다." } }
   };
 
+  /* 서비스 '진행 과정' — 인쇄형은 메인 페이지 단계(인쇄·납품 포함), 촬영·다국어는 인쇄가 없는 일반 단계 */
+  var SVC_PROCESS_PRINT = [
+    { h: "문의 · 상담", p: "전화(1666-2027) 또는 온라인으로 프로젝트를 알려주시면 빠르게 상담합니다." },
+    { h: "견적 · 계약", p: "요구사항에 맞춰 합리적인 견적과 일정·범위를 확정합니다." },
+    { h: "기획 · 디자인", p: "콘셉트 설계와 시안 작업. 충분한 소통으로 방향을 맞춰갑니다." },
+    { h: "수정 · 검수", p: "피드백을 반영해 완성도를 높이고 인쇄 전 최종 검수를 진행합니다." },
+    { h: "인쇄 · 납품", p: "최적의 인쇄·후가공으로 제작 후 안전하게 납품해 드립니다." }
+  ];
+  var SVC_PROCESS_GENERIC = [
+    { h: "문의 접수", p: "전화(1666-2027) 또는 견적 문의로 내용을 남겨주세요." },
+    { h: "상담 · 견적", p: "담당자가 사양과 일정을 잡고 견적을 안내합니다." },
+    { h: "작업 진행", p: "자료 검토 후 시안 → 피드백 → 수정으로 완성합니다." },
+    { h: "검수 · 확정", p: "충분한 검토 후 최종 결과물을 확정합니다." },
+    { h: "최종 납품", p: "완성된 결과물을 약속한 일정에 전달합니다." }
+  ];
+  Object.keys(DEFAULT_SERVICE).forEach(function (k) {
+    var src = (k === "photo" || k === "global") ? SVC_PROCESS_GENERIC : SVC_PROCESS_PRINT;
+    DEFAULT_SERVICE[k].process = src.map(function (s) { return { h: s.h, p: s.p }; });
+  });
+
   function load(key, fallback) {
     try {
       var v = JSON.parse(localStorage.getItem(key));
@@ -634,6 +645,8 @@
         Object.keys(ov[k]).forEach(function (f) {
           if (f === "seo" && ov[k].seo) {
             Object.keys(ov[k].seo).forEach(function (s) { out[k].seo[s] = ov[k].seo[s]; });
+          } else if (Array.isArray(ov[k][f])) {
+            out[k][f] = ov[k][f];  // process 등 배열 필드
           } else if (typeof ov[k][f] === "string") {
             out[k][f] = ov[k][f];
           }

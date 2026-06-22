@@ -164,7 +164,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=22"></script>
+  <script src="js/data.js?v=23"></script>
   <script src="js/main.js?v=55"></script>
   <script>
   HAO.ready.then(function () {
@@ -214,6 +214,17 @@
     document.getElementById("svSeoT2").textContent = seo.t2;
     document.getElementById("svSeoP2").textContent = seo.p2;
 
+    /* 진행 과정: 카테고리별 cat.process (인쇄형=메인 단계, 촬영·다국어=일반 단계).
+       타임라인 노드/애니메이션은 유지하고 각 단계 텍스트만 교체 */
+    var tsteps = document.querySelectorAll("#timeline .tstep");
+    if (cat.process) {
+      cat.process.forEach(function (s, i) {
+        if (!tsteps[i]) return;
+        var h = tsteps[i].querySelector("h3"); if (h) h.innerHTML = HAO.fmt(s.h, "b");
+        var p = tsteps[i].querySelector("p"); if (p) p.innerHTML = HAO.fmt(s.p, "b");
+      });
+    }
+
     /* 서비스 '제작 사례' = 포트폴리오에서 '서비스 노출' 체크한 이 카테고리 작품 우선(모자라면 자동 채움) */
     var works = HAO.getServiceWorks ? HAO.getServiceWorks(cat.c) : HAO.getWorks().filter(function (w) { return w.c === cat.c; });
     var slots = HAO.getSlots ? HAO.getSlots() : {};
@@ -258,6 +269,15 @@
       bind("svSeoP1", null, function (v) { seo.p1 = v; });
       bind("svSeoT2", null, function (v) { seo.t2 = v; });
       bind("svSeoP2", null, function (v) { seo.p2 = v; });
+      /* 진행 과정 단계(제목·설명)도 인라인 편집 → cat.process */
+      if (cat.process) {
+        cat.process.forEach(function (step, i) {
+          if (!tsteps[i]) return;
+          var h = tsteps[i].querySelector("h3"), p = tsteps[i].querySelector("p");
+          if (h) E.mark(h, { key: "svc_" + key + "_pst" + i + "_h", onInput: function (n) { step.h = E.read(n, "b"); } });
+          if (p) E.mark(p, { key: "svc_" + key + "_pst" + i + "_p", onInput: function (n) { step.p = E.read(n, "b"); } });
+        });
+      }
       /* 저장: 전체 서비스 데이터(CATS)를 hao_service 오버라이드로 기록 */
       E.onSave(function () { return (window.HAO && HAO.set) ? HAO.set("hao_service", CATS) : null; });
     }
