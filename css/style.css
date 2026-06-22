@@ -718,7 +718,7 @@ img { display: block; max-width: 100%; }
 }
 
 /* support (지원사업) */
-.sp-lead { font-size: clamp(1.05rem,1.8vw,1.25rem); font-weight: 500; line-height: 1.75; color: var(--muted); max-width: 820px; }
+.sp-lead { font-size: clamp(1.05rem,1.8vw,1.25rem); font-weight: 500; line-height: 1.75; color: var(--muted); max-width: 1100px; }
 .sp-lead em { font-style: normal; color: var(--accent); font-weight: 700; }
 .sp-list { margin-top: 46px; border-top: 1px solid var(--ink); }
 .sp-row {
