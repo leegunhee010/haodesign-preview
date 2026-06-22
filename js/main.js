@@ -274,7 +274,13 @@
       var badge = slide.querySelector(".phero__badge");
       if (badge) badge.textContent = d.badge;
       var lines = slide.querySelectorAll(".phero__title > *");
-      [d.l1, d.l2, d.l3].forEach(function (t, k) { if (lines[k]) lines[k].textContent = (t || "").replace(/\*\*/g, ""); });
+      [d.l1, d.l2, d.l3].forEach(function (t, k) {
+        if (!lines[k]) return;
+        var txt = (t || "").replace(/\*\*/g, "");
+        lines[k].textContent = txt;
+        /* 빈 줄은 접어서 2줄·1줄 헤드라인도 깔끔하게 (바로 수정 모드에선 클릭 위해 유지) */
+        if (!editMode) lines[k].style.display = txt.trim() ? "" : "none";
+      });
       var copy = slide.querySelector(".phero__sub");
       if (copy) copy.innerHTML = HAO.fmt(d.copy, "b");
       var im = slide.querySelector(".phero__media img");
