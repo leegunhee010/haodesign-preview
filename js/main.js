@@ -165,10 +165,25 @@
           else if (el.dataset.haoList) ov[key] = [].map.call(el.children, function (n) { return n.textContent.trim(); }).filter(Boolean).join(" | ");
           else ov[key] = unfmt(el, el.dataset.haoTag);
         });
-        localStorage.setItem("hao_copy", JSON.stringify(ov));
-        if (heroDirty && heroDataEdit) localStorage.setItem("hao_hero", JSON.stringify(heroDataEdit));
-        edited = {}; updateBar();
-        alert("저장되었습니다. 사이트에 바로 반영됩니다.");
+        var btn = this; var label = btn.textContent; btn.disabled = true; btn.textContent = "저장 중…";
+        /* localStorage 캐시 + 서버(Supabase) 동시 저장 — 서버에 안 보내면
+           다음 로드 때 sbLoad가 옛 서버값으로 덮어써서 수정이 사라짐(버그 원인). */
+        var jobs = [];
+        if (window.HAO && HAO.set) {
+          jobs.push(HAO.set("hao_copy", ov));
+          if (heroDirty && heroDataEdit) jobs.push(HAO.set("hao_hero", heroDataEdit));
+        } else {
+          localStorage.setItem("hao_copy", JSON.stringify(ov));
+          if (heroDirty && heroDataEdit) localStorage.setItem("hao_hero", JSON.stringify(heroDataEdit));
+        }
+        Promise.all(jobs).then(function () {
+          edited = {}; updateBar();
+          btn.disabled = false; btn.textContent = label;
+          alert("저장되었습니다. 새로고침해도 그대로 유지되고 모든 방문자에게 반영됩니다.");
+        }).catch(function () {
+          btn.disabled = false; btn.textContent = label;
+          alert("로컬에는 저장됐지만 서버 반영에 실패했어요. 인터넷 연결을 확인하고 다시 저장해주세요.");
+        });
       });
       document.getElementById("haoEditExit").addEventListener("click", function () {
         location.href = location.pathname;
