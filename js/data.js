@@ -655,16 +655,18 @@
     },
     /* 관리자 계정 (데모 — 실서비스에선 서버 인증으로 교체) */
     getCred: function () { return loadObj("hao_admin_cred", { id: "admin", pw: "first1234" }); },
+    /* 견적문의 메일 알림 설정 (관리자 '사이트 설정'에서 수정) — 코드 수정 없이 admin에서 변경.
+       나중에 백엔드 붙이면 url 만 백엔드 주소로 바꾸면 됨. */
+    getMail: function () { return loadObj("hao_mail", { on: !!MAIL_ENDPOINT, url: MAIL_ENDPOINT, to: "sales@haodesign.co.kr" }); },
     /* 견적 문의 — Supabase inquiries 테이블 + (설정 시) 메일 알림 */
     saveInquiry: function (q) {
-      /* 메일 알림: Google Apps Script 웹앱으로 전송 → 담당자 Gmail로 발송.
-         배포 후 아래 MAIL_ENDPOINT 에 /exec URL 만 넣으면 동작. 비어 있으면 메일 생략. */
-      if (MAIL_ENDPOINT) {
+      var m = this.getMail();
+      if (m && m.on && m.url) {
         try {
-          fetch(MAIL_ENDPOINT, {
+          fetch(m.url, {
             method: "POST", mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ name: q.name, phone: q.phone, type: q.type || "", message: q.message || "", date: new Date().toLocaleString("ko-KR") })
+            body: JSON.stringify({ name: q.name, phone: q.phone, type: q.type || "", message: q.message || "", to: m.to || "", date: new Date().toLocaleString("ko-KR") })
           });
         } catch (e) { /* 메일 실패해도 접수는 계속 */ }
       }

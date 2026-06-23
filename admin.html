@@ -465,6 +465,17 @@
             <p class="note" style="margin-top:14px">저장하면 사이트의 전화 · 이메일 링크에 일괄 반영됩니다.</p>
           </div>
           <div class="panel">
+            <h2>견적문의 메일 알림</h2>
+            <p class="note" style="margin-bottom:12px">견적 문의가 접수되면 지정한 메일로 알림을 보냅니다. <b>연동 URL</b>은 Google Apps Script 웹앱(/exec) 주소를 넣으세요. 나중에 백엔드 서버를 붙이면 이 URL만 백엔드 주소로 바꾸면 됩니다.</p>
+            <form class="frm" id="mailForm" style="grid-template-columns:1fr">
+              <div><label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="mailOn" style="width:auto" /> 메일 알림 사용</label></div>
+              <div><label>알림 받는 메일 주소</label><input type="email" id="mailTo" placeholder="sales@haodesign.co.kr" /></div>
+              <div><label>연동 URL (Apps Script /exec 또는 백엔드 주소)</label><input type="text" id="mailUrl" placeholder="https://script.google.com/macros/s/.../exec" /></div>
+              <div class="full actions"><button type="submit" class="btn btn--primary">저장</button></div>
+            </form>
+            <p class="note" style="margin-top:10px">※ URL이 비어 있거나 "사용"을 끄면 메일은 보내지 않고 문의는 그대로 접수·저장됩니다.</p>
+          </div>
+          <div class="panel">
             <h2>우측 하단 빠른버튼 (카카오 · 인스타 · 블로그 · 전화)</h2>
             <form class="frm" id="socialForm">
               <div class="full"><label>카카오톡 채널 / 오픈채팅 링크</label><input type="text" id="soKakao" placeholder="https://pf.kakao.com/... (비우면 버튼 숨김)" /></div>
@@ -494,7 +505,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=30"></script>
+  <script src="js/data.js?v=31"></script>
   <script>
   HAO.ready.then(function () {
     "use strict";
@@ -760,6 +771,8 @@
       $("setTel").value = st.tel; $("setEmail").value = st.email;
       var so = HAO.getSocial();
       $("soKakao").value = so.kakao || ""; $("soInsta").value = so.instagram || ""; $("soBlog").value = so.blog || "";
+      var ml = HAO.getMail ? HAO.getMail() : {};
+      if ($("mailOn")) { $("mailOn").checked = !!ml.on; $("mailTo").value = ml.to || ""; $("mailUrl").value = ml.url || ""; }
     }
 
     /* ---- 히어로 저장 + 이미지 업로드 ---- */
@@ -1070,6 +1083,13 @@
       e.preventDefault();
       store("hao_settings", { tel: $("setTel").value.trim(), email: $("setEmail").value.trim() });
       alert("저장되었습니다. 사이트를 새로고침하면 반영됩니다.");
+    });
+
+    /* ---- 견적문의 메일 알림 저장 ---- */
+    $("mailForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      store("hao_mail", { on: $("mailOn").checked, to: $("mailTo").value.trim(), url: $("mailUrl").value.trim() });
+      alert("메일 알림 설정이 저장되었습니다.");
     });
 
     /* ---- 빠른버튼(SNS) 저장 ---- */
