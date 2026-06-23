@@ -77,6 +77,58 @@
     });
   }
 
+  /* ---- 구조화 데이터(JSON-LD) 주입: 검색·AI 답변엔진(AEO) 노출 강화 ----
+     렌더된 내용 기준으로 생성해 화면과 100% 일치하도록 함 (FAQ·서비스·칼럼은 관리자 수정 반영) */
+  function injectSEO() {
+    if (!window.HAO || !HAO.getSeo) return;
+    var base = (HAO.getSeo().siteUrl || "https://haodesign.co.kr").replace(/\/$/, "");
+    var so = HAO.getSocial ? HAO.getSocial() : {};
+    var sameAs = [so.instagram, so.blog, so.kakao].filter(Boolean);
+    var graph = [];
+    if (pageName !== "index") {
+      graph.push({
+        "@type": "Organization", "@id": base + "/#org",
+        name: "하오디자인 (주식회사 하오커뮤니케이션)", url: base + "/",
+        logo: base + "/assets/img/logo.png", telephone: "1666-2027", email: "sales@haodesign.co.kr",
+        address: { "@type": "PostalAddress", streetAddress: "능동로49길 9, 2F", addressLocality: "광진구", addressRegion: "서울특별시", addressCountry: "KR" },
+        sameAs: sameAs
+      });
+    }
+    function crumb(items) {
+      return { "@type": "BreadcrumbList", itemListElement: items.map(function (it, i) { return { "@type": "ListItem", position: i + 1, name: it.n, item: base + it.u }; }) };
+    }
+    if (pageName === "support") {
+      var faqs = [].map.call(document.querySelectorAll(".faq__item"), function (it) {
+        var q = it.querySelector(".faq__qt"), a = it.querySelector(".faq__a");
+        return (q && a) ? { "@type": "Question", name: q.textContent.trim(), acceptedAnswer: { "@type": "Answer", text: a.textContent.trim() } } : null;
+      }).filter(Boolean);
+      if (faqs.length) graph.push({ "@type": "FAQPage", mainEntity: faqs });
+      graph.push(crumb([{ n: "홈", u: "/" }, { n: "지원사업", u: "/support.html" }]));
+    } else if (pageName === "service" && HAO.getService) {
+      var cats = HAO.getService(), key = (location.search.match(/[?&]cat=([a-z]+)/) || [])[1]; if (!cats[key]) key = "catalog";
+      var cat = cats[key];
+      graph.push({ "@type": "Service", name: cat.label, serviceType: cat.label, description: (cat.desc || "").replace(/\n/g, " "), provider: { "@id": base + "/#org" }, areaServed: "KR" });
+      graph.push(crumb([{ n: "홈", u: "/" }, { n: "서비스", u: "/service.html?cat=catalog" }, { n: cat.label, u: "/service.html?cat=" + key }]));
+    } else if (pageName === "about") {
+      graph.push(crumb([{ n: "홈", u: "/" }, { n: "회사소개", u: "/about.html" }]));
+    } else if (pageName === "work") {
+      graph.push(crumb([{ n: "홈", u: "/" }, { n: "포트폴리오", u: "/work.html" }]));
+    } else if (pageName === "board" && HAO.getPosts) {
+      var posts = HAO.getPosts();
+      graph.push({ "@type": "Blog", name: "하오디자인 칼럼", url: base + "/board.html",
+        blogPost: posts.slice(0, 10).map(function (p) { return { "@type": "BlogPosting", headline: p.title, datePublished: p.date, description: p.summary || "" }; }) });
+      graph.push(crumb([{ n: "홈", u: "/" }, { n: "칼럼", u: "/board.html" }]));
+    } else if (pageName === "contact") {
+      graph.push({ "@type": "ContactPage", name: "견적문의" });
+      graph.push(crumb([{ n: "홈", u: "/" }, { n: "견적문의", u: "/contact.html" }]));
+    }
+    if (!graph.length) return;
+    var s = document.createElement("script"); s.type = "application/ld+json";
+    s.textContent = JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
+    document.head.appendChild(s);
+  }
+  try { injectSEO(); } catch (e) {}
+
   /* ---- 디자인에서 바로 수정 모드 (관리자: ?edit=1) ---- */
   var editMode = /[?&]edit=1/.test(location.search) && localStorage.getItem("hao_edit") === "1";
   if (editMode && window.HAO && HAO.getCopy) {
