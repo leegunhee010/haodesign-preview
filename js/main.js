@@ -372,9 +372,20 @@
     burger.addEventListener("click", function () {
       var open = nav.classList.toggle("is-open");
       burger.classList.toggle("is-open", open);
+      document.body.classList.toggle("menu-open", open);
+      if (!open) { var d = nav.querySelector(".nav__drop.is-open"); if (d) d.classList.remove("is-open"); }
     });
+    var dropToggle = nav.querySelector(".nav__drop-toggle");
     nav.addEventListener("click", function (e) {
-      if (e.target.tagName === "A") { nav.classList.remove("is-open"); burger.classList.remove("is-open"); }
+      var a = e.target.closest("a");
+      if (!a) return;
+      /* 모바일: '서비스' 탭 → 하위 메뉴 펼치기/접기 (이동·메뉴닫기 안 함) */
+      if (a === dropToggle && window.matchMedia("(max-width: 760px)").matches) {
+        e.preventDefault();
+        a.closest(".nav__drop").classList.toggle("is-open");
+        return;
+      }
+      nav.classList.remove("is-open"); burger.classList.remove("is-open"); document.body.classList.remove("menu-open");
     });
   }
 

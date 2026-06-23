@@ -168,8 +168,8 @@ img { display: block; max-width: 100%; }
 
 .burger { display: none; flex-direction: column; gap: 6px; background: none; border: 0; cursor: pointer; }
 .burger span { width: 26px; height: 2px; background: var(--ink); transition: .3s var(--ease); }
-.burger.is-open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-.burger.is-open span:nth-child(2) { transform: translateY(-8px) rotate(-45deg); }
+.burger.is-open span:nth-child(1) { transform: translateY(4px) rotate(45deg); }
+.burger.is-open span:nth-child(2) { transform: translateY(-4px) rotate(-45deg); }
 
 /* ---------- Hero (3-slide carousel: blurred ambience + framed print) ---------- */
 .hero { position: relative; min-height: 100vh; overflow: hidden; background: #f6f4f0; }
@@ -1126,18 +1126,35 @@ img { display: block; max-width: 100%; }
   .process { padding: clamp(80px,12vh,150px) clamp(20px,4vw,54px); }
 }
 @media (max-width: 760px) {
-  .nav, .header__cta { display: none; }
-  .burger { display: flex; }
+  .nav { display: none; }
+  .header__cta { display: inline-flex; margin-left: auto; margin-right: 12px; padding: 8px 16px; font-size: .82rem; }
+  .header__cta span { display: none; }
+  .burger { display: flex; position: relative; z-index: 160; }
+  .burger:focus, .nav.is-open a:focus, .nav.is-open .nav__drop-toggle:focus { outline: none; }
+  /* 메뉴 열렸을 때 커스텀 커서 숨김(프리뷰/터치겸용 기기 잔상 방지) */
+  body.menu-open .cursor-ring, body.menu-open .cursor-dot { opacity: 0 !important; }
+  /* 좌측 정렬 드롭다운 패널 (위에서 내려오는 풀스크린 리스트) */
   .nav.is-open {
-    display: flex; flex-direction: column; gap: 28px; position: fixed; inset: 0;
-    background: var(--bg); z-index: 140; align-items: center; justify-content: center;
-    font-size: 1.6rem;
+    display: flex; flex-direction: column; align-items: stretch; gap: 0;
+    position: fixed; inset: 0; background: #fff; z-index: 140;
+    padding: 84px 26px 40px; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
-  .nav.is-open .nav__drop { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .nav.is-open > a, .nav.is-open .nav__drop-toggle {
+    display: block; width: 100%; text-align: left; font-size: 1.12rem; font-weight: 700;
+    color: var(--ink); padding: 16px 2px; border-bottom: 1px solid var(--line);
+  }
+  .nav.is-open > a::after { display: none; }
+  .nav.is-open .nav__drop { display: block; width: 100%; }
+  .nav.is-open .nav__drop-toggle { display: flex; align-items: center; justify-content: space-between; }
   .nav.is-open .nav__drop-toggle::before { display: none; }
-  .nav.is-open .nav__drop-menu { position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none; border: 0; background: none; padding: 0; display: grid; grid-template-columns: repeat(2, auto); gap: 10px 22px; }
+  /* 아코디언 쉐브론 (우측, 탭하면 펼침) */
+  .nav.is-open .nav__drop-toggle::after { content: ""; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); opacity: .4; transition: transform .25s var(--ease); }
+  .nav.is-open .nav__drop.is-open .nav__drop-toggle::after { transform: rotate(-135deg) translateY(2px); opacity: .7; }
+  /* 하위 메뉴: 들여쓰기 좌측 정렬, 접힘 → 펼침 */
+  .nav.is-open .nav__drop-menu { position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none; border: 0; background: none; padding: 0; display: none; }
+  .nav.is-open .nav__drop.is-open .nav__drop-menu { display: flex; flex-direction: column; }
   .nav.is-open .nav__drop-menu::before { display: none; }
-  .nav.is-open .nav__drop-menu a { font-size: .95rem; color: var(--muted); padding: 0; text-align: center; }
+  .nav.is-open .nav__drop-menu a { display: block; text-align: left; font-size: 1rem; font-weight: 500; color: var(--muted); padding: 13px 2px 13px 18px; }
   /* 모바일: 헤더 backdrop-filter 제거 — 안 그러면 fixed 모바일 메뉴가 헤더 영역에 갇혀 풀스크린이 안 됨 */
   .header.is-stuck, .header { background: rgba(255,255,255,.96); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .work__grid { grid-template-columns: 1fr; }
