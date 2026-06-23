@@ -315,10 +315,10 @@
     }).join("");
   }
 
-  /* ---- 로고 적용 (헤더·푸터 공통, 관리자 수정분) ---- */
+  /* ---- 로고 적용 (헤더=컬러/관리자 수정분, 푸터=흰색 고정으로 어두운 배경 대응) ---- */
   if (window.HAO && HAO.getLogo) {
     var logoSrc = HAO.getLogo();
-    document.querySelectorAll(".brand__logo, .footer__logo").forEach(function (im) { im.src = logoSrc; });
+    document.querySelectorAll(".brand__logo").forEach(function (im) { im.src = logoSrc; });
   }
 
   /* ---- Inject marquee images (포트폴리오에서 끌어옴 — 관리자 수정 반영) ---- */
