@@ -257,7 +257,7 @@
     workGrid.innerHTML = mosaicItems.slice(0, 7).map(function (w, idx) {
       var size = sizes[idx] || "";
       return '<article class="wcard reveal' + (size ? " wcard--" + size : "") + '" style="--d:' + idx + '">' +
-        '<div class="wcard__media"><img src="' + imgSrc(w.f) + '" alt="' + w.t + '" loading="lazy" /></div>' +
+        '<div class="wcard__media"><img src="' + imgSrc(w.f) + '" alt="' + w.t + '" loading="lazy" decoding="async" /></div>' +
         '<div class="wcard__info"><span class="wcard__title">' + w.t + '</span><span class="wcard__cat">' + w.c + '</span></div>' +
       '</article>';
     }).join("");
@@ -274,7 +274,7 @@
     if (!el || !list.length) return;
     var one = "";
     list.forEach(function (w) {
-      one += '<img src="' + imgSrc(w.f) + '" alt="" loading="lazy" />';
+      one += '<img src="' + imgSrc(w.f) + '" alt="" loading="lazy" decoding="async" />';
     });
     el.innerHTML = one;                       // 한 세트 먼저 넣고 폭 측정
     var unitW = el.scrollWidth || 1;
@@ -451,7 +451,7 @@
           strip.setAttribute("aria-hidden", "true");
           var unit = "";
           srcs.forEach(function (s) {
-            unit += '<img src="' + s + '" alt="" loading="lazy" />';
+            unit += '<img src="' + s + '" alt="" loading="lazy" decoding="async" />';
           });
           // 화면 폭을 채울 만큼 반복 (이미지 1장 ≈ 높이×37/24 + 간격)
           var imgW = Math.min(190, window.innerWidth * 0.15) * 37 / 24 + 16;
@@ -482,7 +482,7 @@
       if (!w) return;
       src = imgSrc(w.f).replace("/work-hd/thumb/", "/work-hd/large/");
     }
-    fig.innerHTML = '<img src="' + src + '" alt="" loading="lazy" />';
+    fig.innerHTML = '<img src="' + src + '" alt="" loading="lazy" decoding="async" />';
   });
 
   /* ---- Intro words split (preserve the orange em phrase) ---- */
@@ -679,7 +679,7 @@
     var revCard = function (r) {
       return '<blockquote class="rev"><span class="rev__mark" aria-hidden="true">“</span>' +
         "<p>" + HAO.fmt(r.msg, "b") + "</p>" +
-        "<footer>" + (r.logo ? '<img class="rev__logo" src="' + r.logo + '" alt="" />' : "") +
+        "<footer>" + (r.logo ? '<img class="rev__logo" src="' + r.logo + '" alt="" loading="lazy" decoding="async" />' : "") +
         "<cite>" + HAO.fmt(r.cite, "b") + "</cite></footer></blockquote>";
     };
     var revHalf = Math.ceil(revs.length / 2);
@@ -704,7 +704,7 @@
     var html = "";
     for (var d = 0; d < 2; d++) {
       list.forEach(function (src) {
-        html += '<span class="plogo"><img src="' + src + '" alt="파트너 로고" loading="lazy" /></span>';
+        html += '<span class="plogo"><img src="' + src + '" alt="파트너 로고" loading="lazy" decoding="async" /></span>';
       });
     }
     el.innerHTML = html;
