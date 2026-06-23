@@ -1145,7 +1145,7 @@ img { display: block; max-width: 100%; }
   }
   .nav.is-open > a::after { display: none; }
   .nav.is-open .nav__drop { display: block; width: 100%; }
-  .nav.is-open .nav__drop-toggle { display: flex; align-items: center; justify-content: space-between; }
+  .nav.is-open .nav__drop-toggle { display: flex; align-items: center; justify-content: flex-start; gap: 9px; }
   .nav.is-open .nav__drop-toggle::before { display: none; }
   /* 아코디언 쉐브론 (우측, 탭하면 펼침) */
   .nav.is-open .nav__drop-toggle::after { content: ""; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); opacity: .4; transition: transform .25s var(--ease); }
