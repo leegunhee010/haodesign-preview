@@ -635,6 +635,8 @@
       });
       return out;
     },
+    /* 맞춤 HEAD 코드 (관리자 'SEO 관리' — 서치콘솔 인증 메타·애널리틱스·CSS 링크 등 head에 주입) */
+    getHeadCode: function () { try { var v = JSON.parse(localStorage.getItem("hao_headcode")); return typeof v === "string" ? v : ""; } catch (e) { return ""; } },
     /* 서비스 페이지: 기본값에 저장된 수정값(hao_service)을 카테고리·필드 단위로 덧입혀 반환 */
     getService: function () {
       var ov = loadObj("hao_service", {});

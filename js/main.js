@@ -33,7 +33,7 @@
     if (sp) {
       var abs = function (u) { return /^https?:/.test(u) ? u : (seo.siteUrl.replace(/\/$/, "") + "/" + String(u).replace(/^\//, "")); };
       var pageUrl = seo.siteUrl.replace(/\/$/, "") + "/" + (pageName === "index" ? "" : pageName + ".html");
-      var ogImg = abs(seo.ogImage);
+      var ogImg = abs(sp.ogImage || seo.ogImage);  // 페이지별 공유이미지 우선, 없으면 공통
       function meta(sel, attr, key, val) {
         var el = document.head.querySelector(sel);
         if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
@@ -57,6 +57,28 @@
       meta('meta[name="twitter:title"]', "name", "twitter:title", sp.title || document.title);
       meta('meta[name="twitter:description"]', "name", "twitter:description", sp.desc || "");
       meta('meta[name="twitter:image"]', "name", "twitter:image", ogImg);
+      // 페이지별 색인 여부 (noindex 체크 시 검색엔진에서 제외)
+      if (sp.noindex) meta('meta[name="robots"]', "name", "robots", "noindex, nofollow");
+    }
+  }
+
+  /* ---- 맞춤 HEAD 코드 주입 (관리자 'SEO 관리' — 서치콘솔 인증/애널리틱스/메타/CSS 링크 등) ---- */
+  if (window.HAO && HAO.getHeadCode && !document.getElementById("haoHeadCode")) {
+    var headCode = HAO.getHeadCode();
+    if (headCode && headCode.trim()) {
+      var mk = document.createElement("meta"); mk.id = "haoHeadCode"; document.head.appendChild(mk);
+      var wrap = document.createElement("div"); wrap.innerHTML = headCode;
+      [].slice.call(wrap.childNodes).forEach(function (node) {
+        if (node.nodeType !== 1) return;            // 요소만
+        if (node.tagName === "SCRIPT") {            // 스크립트는 재생성해야 실행됨 (GA 등)
+          var s = document.createElement("script");
+          [].forEach.call(node.attributes, function (a) { s.setAttribute(a.name, a.value); });
+          s.text = node.textContent || "";
+          document.head.appendChild(s);
+        } else {
+          document.head.appendChild(node.cloneNode(true));  // meta/link 등
+        }
+      });
     }
   }
 
