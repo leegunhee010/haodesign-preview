@@ -1,4 +1,4 @@
-/* ===================================================
+﻿/* ===================================================
    HAO DESIGN — Kinetic / Editorial Renewal (Light)
 =================================================== */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -547,7 +547,7 @@ img { display: block; max-width: 100%; }
 .footer__logo { height: 36px; }
 .footer__top p { color: rgba(244,241,234,.55); font-size: .92rem; line-height: 1.6; }
 .footer__grid { max-width: var(--maxw); margin: 0 auto 48px; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 36px; }
-.footer__grid h4 { font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 16px; }
+.footer__grid h3 { font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 16px; }
 .footer__grid a, .footer__grid span { display: block; color: rgba(244,241,234,.78); margin-bottom: 8px; font-size: .93rem; width: fit-content; transition: color .25s, transform .25s var(--ease); }
 .footer__grid a:hover { color: var(--accent-2); transform: translateX(4px); }
 .footer__grid a[href^="tel"] { font-size: clamp(1.5rem,2.4vw,2rem); font-weight: 800; letter-spacing: -.02em; color: #fff; margin-bottom: 12px; }
