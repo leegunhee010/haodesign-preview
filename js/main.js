@@ -900,5 +900,45 @@
     });
   }
   }
+  /* ---- FOUC 방지: 카피·히어로 텍스트를 서버 응답(HAO.ready) 기다리지 않고
+         첫 페인트 전에 즉시 적용. (run()은 ready 이후 서버값으로 한 번 더 갱신) ---- */
+  function applyContentEarly() {
+    if (!(window.HAO && HAO.getCopy)) return;
+    var pn = (location.pathname.split("/").pop() || "index.html").replace(".html", "") || "index";
+    function hHead(d) {
+      if (d && d.head != null && String(d.head).trim() !== "") return String(d.head);
+      if (!d) return "";
+      var o = [];
+      if (d.l1 && d.l1.trim()) o.push(d.l1.replace(/\*\*/g, "").trim());
+      if (d.l2 && d.l2.trim()) o.push(d.l2.replace(/\*\*/g, "").trim());
+      if (d.l3 && d.l3.trim()) o.push("**" + d.l3.replace(/\*\*/g, "").trim() + "**");
+      return o.join("\n");
+    }
+    try {
+      HAO.getCopy().forEach(function (c) {
+        if (c.page !== "all" && c.page !== pn) return;
+        document.querySelectorAll(c.sel).forEach(function (el) {
+          if (c.attr) el.setAttribute(c.attr, c.value);
+          else if (c.list) { var it = c.item || "span"; el.innerHTML = c.value.split("|").map(function (s) { return "<" + it + ">" + HAO.fmt(s.trim(), c.tag || "b") + "</" + it + ">"; }).join(""); }
+          else el.innerHTML = HAO.fmt(c.value, c.tag || "b");
+        });
+      });
+    } catch (e) {}
+    try {
+      var ht = document.getElementById("heroTrack");
+      if (ht && HAO.getHero) {
+        var hd = HAO.getHero();
+        [].slice.call(ht.children).forEach(function (slide, i) {
+          var d = hd[i]; if (!d) return;
+          var b = slide.querySelector(".phero__badge"); if (b) b.textContent = d.badge;
+          var t = slide.querySelector(".phero__title");
+          if (t) t.innerHTML = hHead(d).split("\n").map(function (s) { return s.trim(); }).filter(Boolean).map(function (line) { return "<span>" + HAO.fmt(line, "em") + "</span>"; }).join("");
+          var cp = slide.querySelector(".phero__sub"); if (cp) cp.innerHTML = HAO.fmt(d.copy, "b");
+          var im = slide.querySelector(".phero__media img"); if (im) { var ns = HAO.imgSrc(d.img); if (im.getAttribute("src") !== ns) im.src = ns; }
+        });
+      }
+    } catch (e) {}
+  }
+  applyContentEarly();
   if (window.HAO && HAO.ready && HAO.ready.then) { HAO.ready.then(run); } else { run(); }
 })();
