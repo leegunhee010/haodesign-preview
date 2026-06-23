@@ -10,6 +10,11 @@
   var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hcXJqcnJnbnRscW15eHhvdmZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NjQzMTUsImV4cCI6MjA5NzE0MDMxNX0.3bOfZOXVKSoI9ELfE7ZjWETuxvjpNYHdCBSIMrbAGtU";
   var SB_H = { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json" };
 
+  /* ---- 견적문의 메일 알림: Google Apps Script 웹앱 URL ----
+     script.google.com 에서 배포한 /exec 주소를 여기에 붙여넣으면 문의 접수 시 담당자 Gmail로 메일 발송.
+     비워두면 메일은 생략하고 Supabase 저장만 동작. */
+  var MAIL_ENDPOINT = "";
+
   /* 서버에서 모든 오버라이드를 불러와 localStorage 캐시에 채움 (페이지 부팅 시 1회) */
   function sbLoad() {
     // 캐시(이전 방문 데이터)가 있으면 빠르게 그걸로 렌더, 없으면(첫 방문) 서버를 충분히 기다려
@@ -650,8 +655,19 @@
     },
     /* 관리자 계정 (데모 — 실서비스에선 서버 인증으로 교체) */
     getCred: function () { return loadObj("hao_admin_cred", { id: "admin", pw: "first1234" }); },
-    /* 견적 문의 — Supabase inquiries 테이블 */
+    /* 견적 문의 — Supabase inquiries 테이블 + (설정 시) 메일 알림 */
     saveInquiry: function (q) {
+      /* 메일 알림: Google Apps Script 웹앱으로 전송 → 담당자 Gmail로 발송.
+         배포 후 아래 MAIL_ENDPOINT 에 /exec URL 만 넣으면 동작. 비어 있으면 메일 생략. */
+      if (MAIL_ENDPOINT) {
+        try {
+          fetch(MAIL_ENDPOINT, {
+            method: "POST", mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ name: q.name, phone: q.phone, type: q.type || "", message: q.message || "", date: new Date().toLocaleString("ko-KR") })
+          });
+        } catch (e) { /* 메일 실패해도 접수는 계속 */ }
+      }
       return fetch(SB_URL + "/rest/v1/inquiries", {
         method: "POST", headers: SB_H,
         body: JSON.stringify([{ name: q.name, phone: q.phone, type: q.type || "", message: q.message || "" }])
