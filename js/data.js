@@ -658,17 +658,15 @@
     /* 견적문의 메일 알림 설정 (관리자 '사이트 설정'에서 수정) — 코드 수정 없이 admin에서 변경.
        나중에 백엔드 붙이면 url 만 백엔드 주소로 바꾸면 됨. */
     getMail: function () { return loadObj("hao_mail", { on: !!MAIL_ENDPOINT, url: MAIL_ENDPOINT, to: "sales@haodesign.co.kr" }); },
-    /* 견적 문의 — Supabase inquiries 테이블 + (설정 시) 메일 알림 */
+    /* 견적 문의 — Supabase inquiries 테이블 저장 + (설정 시) 백엔드로 메일 알림 전송.
+       백엔드 계약(요청 JSON): { name, phone, type, message, to, date }  (자세한 건 MAIL_BACKEND.md)
+       백엔드는 CORS 허용 + application/json 수신 → 메일 발송. 미구축/꺼짐이면 메일만 생략. */
     saveInquiry: function (q) {
       var m = this.getMail();
+      var payload = { name: q.name, phone: q.phone, type: q.type || "", message: q.message || "", to: m.to || "", date: new Date().toLocaleString("ko-KR") };
       if (m && m.on && m.url) {
-        try {
-          fetch(m.url, {
-            method: "POST", mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ name: q.name, phone: q.phone, type: q.type || "", message: q.message || "", to: m.to || "", date: new Date().toLocaleString("ko-KR") })
-          });
-        } catch (e) { /* 메일 실패해도 접수는 계속 */ }
+        fetch(m.url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+          .catch(function () { /* 백엔드 미배포/오류여도 접수·저장은 계속 */ });
       }
       return fetch(SB_URL + "/rest/v1/inquiries", {
         method: "POST", headers: SB_H,
